@@ -2,10 +2,13 @@ import Head from "next/head";
 import { ApplicationResponse } from "../../common/types";
 import Card from "../../components/Card";
 import styles from "../../styles/Dashboard.module.css";
+import organizations from '../../dataUtils/organizations.json';
 
 export const getServerSideProps = async () => {
-  const res = await fetch("http://localhost:3000/api/v1/organization");
-  const serverData: ApplicationResponse = await res.json();
+  
+  const serverData = {
+    data: organizations
+  }
 
   return {
     props : { serverData }

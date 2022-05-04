@@ -1,20 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ApplicationResponse, Organization } from "../../../../common/types";
+import organizations from '../../../../dataUtils/organizations.json';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<ApplicationResponse>){
 
-  const data: Organization[] = [
-    {
-      id:"some-id",
-      name:"First Organization",
-      description:"This organization specializes in medical grade devices for critical and non-critical care patients."
-    },
-    {
-      id:"next-id",
-      name:"Second Organization",
-      description:"We provide one stop solutions for all your agricultural and e-farm solutions."
-    }
-  ];
+  const data: Organization[] = organizations;
 
   const result: ApplicationResponse  = {
     data,

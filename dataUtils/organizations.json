@@ -1,0 +1,12 @@
+[
+  {
+    "id":"some-id",
+    "name":"First Organization",
+    "description":"This organization specializes in medical grade devices for critical and non-critical care patients."
+  },
+  {
+    "id":"next-id",
+    "name":"Second Organization",
+    "description":"We provide one stop solutions for all your agricultural and e-farm solutions."
+  }
+]
