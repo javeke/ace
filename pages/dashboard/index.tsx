@@ -1,8 +1,7 @@
 import Head from "next/head";
 import { ApplicationResponse } from "../../common/types";
 import Card from "../../components/Card";
-import Navbar from "../../components/Navbar";
-import styles from "./dashboard.module.css";
+import styles from "./Dashboard.module.css";
 
 export const getServerSideProps = async () => {
   const res = await fetch("http://localhost:3000/api/v1/organization");

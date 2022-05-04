@@ -1,6 +1,6 @@
 import type { NextPage as Page } from 'next'
 import Head from 'next/head'
-import styles from '../styles/home.module.css'
+import styles from '../styles/Home.module.css'
 
 const Home: Page = () => {
   return (
