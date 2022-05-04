@@ -42,10 +42,11 @@
   }
 }
 
-.navigation_item__link {
+.navigation_item a {
   color: var(--secondary-color);
 }
 
-.navigation_item__link:hover {
+.navigation_item a:hover {
   color: var(--primary-color);
+  text-decoration:underline;
 }
