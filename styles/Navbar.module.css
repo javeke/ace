@@ -50,3 +50,7 @@
   color: var(--primary-color);
   text-decoration:underline;
 }
+
+.active {
+  font-weight: bold;
+}
