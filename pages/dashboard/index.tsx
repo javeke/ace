@@ -1,10 +1,11 @@
 import Head from "next/head";
-import { ApplicationResponse } from "../../common/types";
+import { ErrorDataResponse, HTTP_SUCCESS_UPPER_CODE, OrganizationDataResponse } from "../../common/types";
 import Card from "../../components/Card";
 import styles from "../../styles/Dashboard.module.css";
 import { IoMdAdd } from 'react-icons/io';
 import { StatusCodes } from "http-status-codes";
 import Link from "next/link";
+import errorHandler, { serverErrorResponse } from "../../utils/apiErrorHandler";
 
 export const getServerSideProps = async () => {
   
@@ -25,17 +26,13 @@ export const getServerSideProps = async () => {
       }
     }
 
-    if(response.status === StatusCodes.INTERNAL_SERVER_ERROR) {
+    if(!(response.status >= StatusCodes.OK && response.status<= HTTP_SUCCESS_UPPER_CODE)){
+      const err = errorHandler(response);
       return {
-        props: {
-          serverData: { 
-            data: [],
-            code: StatusCodes.INTERNAL_SERVER_ERROR,
-            msg: "Interal Server Error",
-            error: "An Error Occurred"
-          }
+        props :{
+          serverData : err
         }
-      }
+      };
     }
 
     const data = await response.json();
@@ -53,12 +50,7 @@ export const getServerSideProps = async () => {
   catch(error){
     return {
       props: {
-        serverData: { 
-          data: [],
-          code: StatusCodes.CONFLICT,
-          msg: "Server Error",
-          error: "Request Not Sent"
-        }
+        serverData: serverErrorResponse
       }
     }
   }
@@ -66,7 +58,7 @@ export const getServerSideProps = async () => {
 
 
 type DashboardProps = {
-  serverData: ApplicationResponse
+  serverData: OrganizationDataResponse | ErrorDataResponse
 }
 
 const Dashboard = ({ serverData }: DashboardProps)=>{
@@ -97,10 +89,10 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
         </div>
 
         {
-          serverData.data.length > 0 ? (
+          (serverData.data?.length && (serverData.data?.length > 0)) ? (
             <div className={styles.card_container}>
               {
-                serverData.data.map((organization)=>(
+                serverData.data?.map((organization)=>(
                   <Card key={organization.organizationId} title={organization.name} bodyText={organization.description} />
                 ))
               }

@@ -1,9 +1,10 @@
 import { StatusCodes } from "http-status-codes";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ApplicationResponse, Organization } from "../../../../common/types";
+import { ApplicationApiResponse, ErrorDataResponse, HTTP_SUCCESS_UPPER_CODE, Organization, OrganizationDataResponse } from "../../../../common/types";
 import organizations from '../../../../dataUtils/organizations.json';
+import errorHandler, { serverErrorResponse } from "../../../../utils/apiErrorHandler";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<ApplicationResponse>){
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ApplicationApiResponse>){
   
   const apiEndpoint = process.env.API_ENDPOINT!;
   
@@ -31,23 +32,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           msg:"No Organizations Available"
         });
       }
-  
-      if(response.status === StatusCodes.INTERNAL_SERVER_ERROR) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
-          data: [],
-          code: StatusCodes.INTERNAL_SERVER_ERROR,
-          msg: "Interal Server Error",
-          error: "An Error Occurred"
-        });
-      }
 
-      if(response.status === StatusCodes.NOT_MODIFIED) {
-        console.log(response);
-        return res.status(StatusCodes.NOT_MODIFIED).json({ 
-          data: [],
-          code: StatusCodes.NOT_MODIFIED,
-          msg: "Interal Server Error"
-        });
+      if(!(response.status >= StatusCodes.OK && response.status<= HTTP_SUCCESS_UPPER_CODE)){
+        const err = errorHandler(response);
+        return res.status(err.code).json(err);
       }
   
       const data = await response.json();
@@ -59,26 +47,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
     }
     catch(error) {
-      console.log(error);
-      return res.status(StatusCodes.CONFLICT).json({ 
-        data: [],
-        code: StatusCodes.CONFLICT,
-        msg: "Server Error",
-        error: "Request Not Sent"
-      });
+      
+      return res.status(serverErrorResponse.code).json(serverErrorResponse);
     }
   }
   else if (req.method === "GET"){
     const data: Organization[] = organizations;
 
-    const result: ApplicationResponse  = {
+    const result: OrganizationDataResponse  = {
       data,
       msg:"Successful",
       code:200
     };
 
-    const errorResponse: ApplicationResponse = {
-      data:[],
+    const errorResponse: ErrorDataResponse = {
+      data:null,
       msg:"An Error Occured",
       code:400,
       error:"Bad Request"
