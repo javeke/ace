@@ -50,11 +50,11 @@ const OrganizationCard = ({ organization, ondelete, onloading, onEdit }: Organiz
           <h3 className={styles.card_title}>{organization.name}</h3>
         </div>
         <div className={styles.card_header_actions}>
-          <span>
-            <FiEdit onClick={onEdit} />
+          <span onClick={onEdit}>
+            <FiEdit />
           </span>
-          <span>
-            <RiDeleteBin6Line onClick={handleDelete} />
+          <span onClick={handleDelete}>
+            <RiDeleteBin6Line />
           </span>
         </div>
       </div>

@@ -10,7 +10,7 @@
 
 .loading_fullscreen {
   position: fixed;
-  background-color: #00000047;
+  background-color: var(--backdrop-bg-color);
   width: 100vw;
   height: 100vh;
   top: 0;
@@ -27,7 +27,7 @@
   stroke-dashoffset: calc(var(--two-pi) * var(--circle-radius) * var(--hidden-sector));
   fill: none;
   transform-origin: 50% 50%;
-  animation: spin 0.75s linear infinite;
+  animation: spin 0.5s linear infinite;
 }
 
 @keyframes spin {

@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { ApplicationApiResponse, HTTP_SUCCESS_UPPER_CODE, Organization, OrganizationDataResponse } from "../../common/types";
-import Card from "../../components/Card";
+import OrganizationCard from "../../components/OrganizationCard";
 import styles from "../../styles/Dashboard.module.css";
 import { IoMdAdd } from 'react-icons/io';
 import { StatusCodes } from "http-status-codes";
@@ -8,6 +8,7 @@ import Link from "next/link";
 import errorHandler, { serverErrorResponse } from "../../utils/apiErrorHandler";
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
+import Modal from "../../components/Modal";
 
 export const getServerSideProps = async () => {
   
@@ -67,6 +68,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
 
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
 
   useEffect(()=>{
     setIsLoading(true);
@@ -81,7 +83,8 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
   }
 
   const onEdit = ()=>{
-    setIsLoading(true);
+    // setIsLoading(true);
+    setIsModalOpen(true);
   }
 
   if (serverData.error) {
@@ -114,7 +117,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
             <div className={styles.card_container}>
               {
                 organizations.map((organization)=>(
-                  <Card key={organization.organizationId} organization={organization} ondelete={onDelete} onloading={setIsLoading} onEdit={onEdit} />
+                  <OrganizationCard key={organization.organizationId} organization={organization} ondelete={onDelete} onloading={setIsLoading} onEdit={onEdit} />
                 ))
               }
             </div>
@@ -124,7 +127,8 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
             </div>
           )
         }
-        { isLoading && <Loading onClick={()=> setIsLoading(false)}/>}
+        { isLoading && <Loading isFullscreen onClick={()=> setIsLoading(false)}/>}
+        { isModalOpen && <Modal isError title="Some title" onClose={()=> setIsModalOpen(false)}>mode</Modal >}
       </div>
     </>
   );
