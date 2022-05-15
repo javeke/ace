@@ -7,6 +7,7 @@ import { StatusCodes } from "http-status-codes";
 import Link from "next/link";
 import errorHandler, { serverErrorResponse } from "../../utils/apiErrorHandler";
 import { useEffect, useState } from "react";
+import Loading from "../../components/Loading";
 
 export const getServerSideProps = async () => {
   
@@ -65,15 +66,22 @@ type DashboardProps = {
 const Dashboard = ({ serverData }: DashboardProps)=>{
 
   const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(()=>{
+    setIsLoading(true);
     if(serverData.code === StatusCodes.OK && serverData.data){
       setOrganizations(serverData.data);
     }
+    setIsLoading(false);
   },[]);
 
   const onDelete = (newData: Organization[])=>{
     setOrganizations(newData);
+  }
+
+  const onEdit = ()=>{
+    setIsLoading(true);
   }
 
   if (serverData.error) {
@@ -106,7 +114,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
             <div className={styles.card_container}>
               {
                 organizations.map((organization)=>(
-                  <Card key={organization.organizationId} organization={organization} ondelete={onDelete} />
+                  <Card key={organization.organizationId} organization={organization} ondelete={onDelete} onloading={setIsLoading} onEdit={onEdit} />
                 ))
               }
             </div>
@@ -116,6 +124,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
             </div>
           )
         }
+        { isLoading && <Loading onClick={()=> setIsLoading(false)}/>}
       </div>
     </>
   );

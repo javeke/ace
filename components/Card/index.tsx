@@ -6,13 +6,16 @@ import { StatusCodes } from 'http-status-codes';
 
 interface OrganizationCardProps {
   organization: Organization,
-  ondelete: (data: Organization[])=>void
+  ondelete: (data: Organization[])=>void,
+  onloading? : (state: boolean)=>void,
+  onEdit?: ()=>void
 }
 
-const OrganizationCard = ({ organization, ondelete }: OrganizationCardProps)=>{
+const OrganizationCard = ({ organization, ondelete, onloading, onEdit }: OrganizationCardProps)=>{
 
   // TODO: complete this callback to remove organization
   const handleDelete = async ()=>{
+    if(onloading) onloading(true);
     try {
       const response  = await fetch(`/api/v1/organization/${organization.organizationId}`, {
         method: "DELETE"
@@ -35,6 +38,9 @@ const OrganizationCard = ({ organization, ondelete }: OrganizationCardProps)=>{
     catch(error){
       alert("No request was sent");
     }
+    finally{
+      if(onloading) onloading(false);
+    }
   }
 
   return (
@@ -45,7 +51,7 @@ const OrganizationCard = ({ organization, ondelete }: OrganizationCardProps)=>{
         </div>
         <div className={styles.card_header_actions}>
           <span>
-            <FiEdit />
+            <FiEdit onClick={onEdit} />
           </span>
           <span>
             <RiDeleteBin6Line onClick={handleDelete} />

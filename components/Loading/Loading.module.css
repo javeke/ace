@@ -1,0 +1,37 @@
+.loading, .loading_fullscreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading {
+  width: 100%;
+}
+
+.loading_fullscreen {
+  position: fixed;
+  background-color: #00000047;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+}
+
+.outer_circle {
+  --circle-radius:20;
+  --two-pi: calc(2 * 3.14);
+  --hidden-sector: 0.25;
+  stroke: var(--primary-color);
+  stroke-width: 5px;
+  stroke-dasharray: calc(var(--two-pi) * var(--circle-radius));
+  stroke-dashoffset: calc(var(--two-pi) * var(--circle-radius) * var(--hidden-sector));
+  fill: none;
+  transform-origin: 50% 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotateZ(360deg);
+  }
+}
