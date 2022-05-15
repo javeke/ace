@@ -42,7 +42,6 @@ const errorHandler = (response: Response): ErrorDataResponse => {
       msg: "Request Not Performed"
     });
   }
-
   return ({ 
     data: null,
     code: StatusCodes.INTERNAL_SERVER_ERROR,

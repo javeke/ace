@@ -1,4 +1,26 @@
+.add_organization_flatImage {
+  display: none;
+}
 
+@media screen and (min-width: 680px) {
+  .add_organization {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .add_organization_flatImage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 3rem;
+  }
+
+  .add_organization_flatImage img {
+    width: 100%;
+    max-width: 700px;
+    max-height: 350px;
+  }
+}
 
 .add_organization_form {
   display: flex;

@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
+import AddPostImage from '../../public/add_post.svg';
 import styles from '../../styles/NewOrganization.module.css';
 
 const NewOrganization = ()=>{
@@ -35,11 +36,10 @@ const NewOrganization = ()=>{
     })
     .then(res=>res.json())
     .then((data)=>{
-      console.log(data);
       router.push('/dashboard');
     })
-    .catch((error)=>{
-      console.log(error);
+    .catch(()=>{
+      alert("Could not make request");
     });
   }
 
@@ -66,6 +66,9 @@ const NewOrganization = ()=>{
               <textarea id="organization-description" placeholder="What does your origanization do?" value={organizationDescription} onChange={((e)=>setorganizationDescription(e.target.value))} required minLength={10} />
             </div>
           </form>
+          <div className={styles.add_organization_flatImage}>
+            <img src="/working_late.svg" alt="Add Post" />
+          </div>
         </div>
       </div>
     </>

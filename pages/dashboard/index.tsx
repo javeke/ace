@@ -1,11 +1,12 @@
 import Head from "next/head";
-import { ErrorDataResponse, HTTP_SUCCESS_UPPER_CODE, OrganizationDataResponse } from "../../common/types";
+import { ApplicationApiResponse, HTTP_SUCCESS_UPPER_CODE, Organization, OrganizationDataResponse } from "../../common/types";
 import Card from "../../components/Card";
 import styles from "../../styles/Dashboard.module.css";
 import { IoMdAdd } from 'react-icons/io';
 import { StatusCodes } from "http-status-codes";
 import Link from "next/link";
 import errorHandler, { serverErrorResponse } from "../../utils/apiErrorHandler";
+import { useEffect, useState } from "react";
 
 export const getServerSideProps = async () => {
   
@@ -58,10 +59,22 @@ export const getServerSideProps = async () => {
 
 
 type DashboardProps = {
-  serverData: OrganizationDataResponse | ErrorDataResponse
+  serverData: ApplicationApiResponse
 }
 
 const Dashboard = ({ serverData }: DashboardProps)=>{
+
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+
+  useEffect(()=>{
+    if(serverData.code === StatusCodes.OK && serverData.data){
+      setOrganizations(serverData.data);
+    }
+  },[]);
+
+  const onDelete = (newData: Organization[])=>{
+    setOrganizations(newData);
+  }
 
   if (serverData.error) {
     return (
@@ -89,11 +102,11 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
         </div>
 
         {
-          (serverData.data?.length && (serverData.data?.length > 0)) ? (
+          ((organizations.length > 0)) ? (
             <div className={styles.card_container}>
               {
-                serverData.data?.map((organization)=>(
-                  <Card key={organization.organizationId} title={organization.name} bodyText={organization.description} />
+                organizations.map((organization)=>(
+                  <Card key={organization.organizationId} organization={organization} ondelete={onDelete} />
                 ))
               }
             </div>
