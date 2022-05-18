@@ -1,9 +1,13 @@
 :root{
   --primary-color: #000;
   --secondary-color: #212112;
+  --primary-inverse-color: #fff;
+  --secondary-inverse-color: #e2e2e2;
   
   --primary-bg-color: #fff;
   --secondary-bg-color: #d6d6d8;
+  --primary-inverse-bg-color: #303033;
+  --secondary-inverse-bg-color: #4f4f51;
   
   --box-shadow-color: #ececec;
   --box-shadow: 0px 0px 4px 2px;
@@ -28,10 +32,15 @@ body {
 .dark-theme {
   --primary-color: #fff;
   --secondary-color: #e2e2e2;
+  --primary-inverse-color: #000;
+  --secondary-inverse-color: #212112;
   
   --primary-bg-color: #303033;
   --primary-bg-color-900: #252527;
   --secondary-bg-color: #4f4f51;
+
+  --primary-inverse-bg-color: #fff;
+  --secondary-inverse-bg-color: #d6d6d8;
 
   --box-shadow-color: #303030;
 }

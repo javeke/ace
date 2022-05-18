@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const requestBody = JSON.parse(req.body);
     
     try {
-      const response = await fetch(apiEndpoint, {
+      const response = await fetch(`${apiEndpoint}/organizations`, {
         method:"POST",
         headers:{
           "Content-Type":"application/json"
@@ -26,6 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
 
       if(response.status === StatusCodes.NO_CONTENT){
+        console.log("No Content Response. No organization was added.");
         return  res.status(StatusCodes.NO_CONTENT).json({
           data: [],
           code: StatusCodes.NO_CONTENT,
@@ -34,12 +35,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       }
 
       if(!(response.status >= StatusCodes.OK && response.status<= HTTP_SUCCESS_UPPER_CODE)){
+        console.log(`Error Response Code: ${response.status}`);
         const err = errorHandler(response);
         return res.status(err.code).json(err);
       }
   
       const data = await response.json();
-  
+      console.log(`Response Code: ${response.status}. Organizations Retreived.`);
       return res.status(StatusCodes.OK).json({
         data,
         code: StatusCodes.OK,
@@ -47,35 +49,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
     }
     catch(error) {
-      
       return res.status(serverErrorResponse.code).json(serverErrorResponse);
     }
   }
   else if (req.method === "GET"){
-    const data: Organization[] = organizations;
+    console.log("Request to get organizations");
+    try {
+      const response = await fetch(`${apiEndpoint}/organizations`);
 
-    const result: OrganizationDataResponse  = {
-      data,
-      msg:"Successful",
-      code:200
-    };
+      if(response.status === StatusCodes.NO_CONTENT){
+        console.log("No Content Response. No organization exists.");
+        return  res.status(StatusCodes.NO_CONTENT).json({
+          data: [],
+          code: StatusCodes.NO_CONTENT,
+          msg:"No Organizations Available"
+        });
+      }
 
-    const errorResponse: ErrorDataResponse = {
-      data:null,
-      msg:"An Error Occured",
-      code:400,
-      error:"Bad Request"
+      if(!(response.status >= StatusCodes.OK && response.status<= HTTP_SUCCESS_UPPER_CODE)){
+        console.log(`Error Response Code: ${response.status}`);
+        const err = errorHandler(response);
+        return res.status(err.code).json(err);
+      }
+  
+      const data = await response.json();
+      console.log(`Response Code: ${response.status}. Organizations Retreived.`);
+      return res.status(StatusCodes.OK).json({
+        data,
+        code: StatusCodes.OK,
+        msg: "Organizations Retrieved" 
+      });
     }
-    
-    const error = false;
-    if(!error){
-      res.status(200).json(result);
-    }
-    else{
-      res.status(400).json(errorResponse);
-    }
+    catch(error) {
+      return res.status(serverErrorResponse.code).json(serverErrorResponse);
+   }
   }
   else {
+    console.log(`Request Method does not exist.`);
     return res.status(StatusCodes.NOT_FOUND).json({
       data:[],
       msg:"Does Not Exist",
@@ -83,5 +93,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       error:"Method Does Not Exist"
     });
   }
-  
 }

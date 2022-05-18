@@ -6,16 +6,17 @@ import { IoMdAdd } from 'react-icons/io';
 import { StatusCodes } from "http-status-codes";
 import Link from "next/link";
 import errorHandler, { serverErrorResponse } from "../../utils/apiErrorHandler";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Loading from "../../components/Loading";
 import Modal from "../../components/Modal";
+import ConfirmDelete from "../../components/ConfirmDelete";
 
 export const getServerSideProps = async () => {
   
   const apiEndpoint = process.env.API_ENDPOINT!;
 
   try {  
-    const response  = await fetch(apiEndpoint);
+    const response  = await fetch(`${apiEndpoint}/organizations`);
 
     if(response.status === StatusCodes.NO_CONTENT){
       return {
@@ -68,7 +69,10 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
 
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isErrorModal, setIsErrorModal] = useState<boolean>(false);
+  const [modalTitle, setModalTitle] = useState<string>("Modal");
+  const [modalComponent, setModalComponent] = useState<ReactNode>(undefined);
 
   useEffect(()=>{
     setIsLoading(true);
@@ -78,8 +82,46 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
     setIsLoading(false);
   },[]);
 
-  const onDelete = (newData: Organization[])=>{
-    setOrganizations(newData);
+  const shouldDelete = (organization: Organization)=>{
+    setIsErrorModal(false);
+    setModalTitle(`Delete ${organization.name}`);
+    setModalComponent(<ConfirmDelete organization={organization} onDelete={handleDelete} onCancel={handleCancel} />);
+    setIsModalOpen(true);
+  }
+  
+    
+  const handleDelete = async (organization: Organization)=>{
+    setIsLoading(true);
+    try {
+      const response  = await fetch(`/api/v1/organization/${organization.organizationId}`, {
+        method: "DELETE"
+      });
+
+      if(response.status === StatusCodes.NOT_MODIFIED){
+        alert(`Could not delete ${organization.name}`);
+      }
+
+      if(response.status === StatusCodes.INTERNAL_SERVER_ERROR){
+        alert("A server error occurred");
+      }
+
+      if(response.status ===  StatusCodes.OK){
+        alert(`Deleted ${organization.name}`);
+        const newData: OrganizationDataResponse = await response.json();
+        setOrganizations(newData.data);
+      }
+    }
+    catch(error){
+      alert("No request was sent");
+    }
+    finally{
+      setIsLoading(false);
+      setIsModalOpen(false);
+    }
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   }
 
   const onEdit = ()=>{
@@ -117,7 +159,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
             <div className={styles.card_container}>
               {
                 organizations.map((organization)=>(
-                  <OrganizationCard key={organization.organizationId} organization={organization} ondelete={onDelete} onloading={setIsLoading} onEdit={onEdit} />
+                  <OrganizationCard key={organization.organizationId} organization={organization} ondelete={shouldDelete} onEdit={onEdit} />
                 ))
               }
             </div>
@@ -127,8 +169,8 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
             </div>
           )
         }
-        { isLoading && <Loading isFullscreen onClick={()=> setIsLoading(false)}/>}
-        { isModalOpen && <Modal isError title="Some title" onClose={()=> setIsModalOpen(false)}>mode</Modal >}
+        { isLoading && <Loading isFullscreen onClick={()=> setIsLoading(false)}/> }
+        { isModalOpen && <Modal isError={isErrorModal} title={modalTitle} onClose={()=> setIsModalOpen(false)} children={modalComponent} /> }
       </div>
     </>
   );

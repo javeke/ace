@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   if(req.method === "DELETE") {
     console.log("Sending request to delete organization with id %s", organizationId);
     try {
-      const response = await fetch(`${apiEndpoint}/${organizationId}`, {
+      const response = await fetch(`${apiEndpoint}/organizations/${organizationId}`, {
         method:"DELETE"
       });
 

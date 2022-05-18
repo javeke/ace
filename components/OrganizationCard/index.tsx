@@ -1,47 +1,15 @@
 import styles from '../../styles/OrganizationCard.module.css';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { FiEdit } from 'react-icons/fi';
-import { Organization, OrganizationDataResponse } from '../../common/types';
-import { StatusCodes } from 'http-status-codes';
+import { Organization } from '../../common/types';
 
 interface OrganizationCardProps {
   organization: Organization,
-  ondelete: (data: Organization[])=>void,
-  onloading? : (state: boolean)=>void,
+  ondelete: (data: Organization)=>void,
   onEdit?: ()=>void
 }
 
-const OrganizationCard = ({ organization, ondelete, onloading, onEdit }: OrganizationCardProps)=>{
-
-  // TODO: complete this callback to remove organization
-  const handleDelete = async ()=>{
-    if(onloading) onloading(true);
-    try {
-      const response  = await fetch(`/api/v1/organization/${organization.organizationId}`, {
-        method: "DELETE"
-      });
-
-      if(response.status === StatusCodes.NOT_MODIFIED){
-        alert(`Could not delete ${organization.name}`);
-      }
-
-      if(response.status === StatusCodes.INTERNAL_SERVER_ERROR){
-        alert("A server error occurred");
-      }
-
-      if(response.status ===  StatusCodes.OK){
-        alert(`Deleted ${organization.name}`);
-        const newData: OrganizationDataResponse = await response.json();
-        ondelete(newData.data);
-      }
-    }
-    catch(error){
-      alert("No request was sent");
-    }
-    finally{
-      if(onloading) onloading(false);
-    }
-  }
+const OrganizationCard = ({ organization, ondelete, onEdit }: OrganizationCardProps)=>{
 
   return (
     <div className={styles.card}>
@@ -53,7 +21,7 @@ const OrganizationCard = ({ organization, ondelete, onloading, onEdit }: Organiz
           <span onClick={onEdit}>
             <FiEdit />
           </span>
-          <span onClick={handleDelete}>
+          <span onClick={()=>ondelete(organization)}>
             <RiDeleteBin6Line />
           </span>
         </div>
