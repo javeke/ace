@@ -1,11 +1,20 @@
 :root{
   --primary-color: #000;
   --secondary-color: #212112;
+  --primary-inverse-color: #fff;
+  --secondary-inverse-color: #e2e2e2;
   
   --primary-bg-color: #fff;
   --secondary-bg-color: #d6d6d8;
+  --primary-inverse-bg-color: #303033;
+  --secondary-inverse-bg-color: #4f4f51;
   
   --box-shadow-color: #ececec;
+  --box-shadow: 0px 0px 4px 2px;
+
+  --backdrop-bg-color: #00000047;
+  --error-bg-color: rgba(255, 0, 0, 0.66);
+  --error-color: #fff;
 }
 
 * {
@@ -23,9 +32,15 @@ body {
 .dark-theme {
   --primary-color: #fff;
   --secondary-color: #e2e2e2;
+  --primary-inverse-color: #000;
+  --secondary-inverse-color: #212112;
   
-  --primary-bg-color: #202022;
+  --primary-bg-color: #303033;
+  --primary-bg-color-900: #252527;
   --secondary-bg-color: #4f4f51;
+
+  --primary-inverse-bg-color: #fff;
+  --secondary-inverse-bg-color: #d6d6d8;
 
   --box-shadow-color: #303030;
 }
@@ -43,4 +58,42 @@ a {
 
 .container {
   padding: 0 2rem;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.topbar{
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.topbar .topbar_add_action {
+  color: var(--primary-color);
+  background-color: var(--primary-bg-color);
+  box-shadow: var(--box-shadow) var(--box-shadow-color);
+  border: 1px solid var(--secondary-bg-color);
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.topbar_add_action :is(a, span) {
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.topbar .topbar_add_action:hover{
+  background-color: var(--primary-bg-color-900);
+}
+
+.topbar_add_action svg {
+  font-size: 16px;
 }

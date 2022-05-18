@@ -1,0 +1,53 @@
+.add_organization_flatImage {
+  display: none;
+}
+
+@media screen and (min-width: 680px) {
+  .add_organization {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .add_organization_flatImage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 3rem;
+  }
+
+  .add_organization_flatImage img {
+    width: 100%;
+    max-width: 700px;
+    max-height: 350px;
+  }
+}
+
+.add_organization_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+
+.add_organization_form_item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.add_organization_form_item label {
+  text-align: left;
+  max-width: 500px;
+  width: 100%;
+}
+
+.add_organization_form_item :is(input, textarea) {
+  max-width: 500px;
+  width: 100%;
+  font-size: 16px;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+}
