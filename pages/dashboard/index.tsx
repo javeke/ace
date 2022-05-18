@@ -91,6 +91,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
   
     
   const handleDelete = async (organization: Organization)=>{
+    setIsModalOpen(false);
     setIsLoading(true);
     try {
       const response  = await fetch(`/api/v1/organization/${organization.organizationId}`, {
@@ -124,8 +125,10 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
     setIsModalOpen(false);
   }
 
-  const onEdit = ()=>{
-    // setIsLoading(true);
+  const onEdit = (organization: Organization)=>{
+    setIsErrorModal(false);
+    setModalTitle(`Edit ${organization.name}`);
+    setModalComponent(<p>Currently Under Development. Enjoy The Grand Line And Check Back Later!</p>);
     setIsModalOpen(true);
   }
 
@@ -159,7 +162,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
             <div className={styles.card_container}>
               {
                 organizations.map((organization)=>(
-                  <OrganizationCard key={organization.organizationId} organization={organization} ondelete={shouldDelete} onEdit={onEdit} />
+                  <OrganizationCard key={organization.organizationId} organization={organization} onDelete={shouldDelete} onEdit={onEdit} />
                 ))
               }
             </div>

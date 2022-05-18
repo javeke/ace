@@ -5,11 +5,11 @@ import { Organization } from '../../common/types';
 
 interface OrganizationCardProps {
   organization: Organization,
-  ondelete: (data: Organization)=>void,
-  onEdit?: ()=>void
+  onDelete: (data: Organization)=>void,
+  onEdit: (data: Organization)=>void
 }
 
-const OrganizationCard = ({ organization, ondelete, onEdit }: OrganizationCardProps)=>{
+const OrganizationCard = ({ organization, onDelete, onEdit }: OrganizationCardProps)=>{
 
   return (
     <div className={styles.card}>
@@ -18,10 +18,10 @@ const OrganizationCard = ({ organization, ondelete, onEdit }: OrganizationCardPr
           <h3 className={styles.card_title}>{organization.name}</h3>
         </div>
         <div className={styles.card_header_actions}>
-          <span onClick={onEdit}>
+          <span onClick={()=> onEdit(organization)}>
             <FiEdit />
           </span>
-          <span onClick={()=>ondelete(organization)}>
+          <span onClick={()=>onDelete(organization)}>
             <RiDeleteBin6Line />
           </span>
         </div>

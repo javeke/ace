@@ -18,12 +18,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
 
       if(!(response.status >= StatusCodes.OK && response.status<= HTTP_SUCCESS_UPPER_CODE)){
+        console.log(`Error Response Code: ${response.status}`);
         const err = errorHandler(response);
         return res.status(err.code).json(err);
       }
 
       const data = await response.json();
-  
+      console.log(`Response Code: ${response.status}. Organization Deleted.`);
       return res.status(StatusCodes.OK).json({
         data,
         code: StatusCodes.OK,
