@@ -67,20 +67,13 @@ type DashboardProps = {
 
 const Dashboard = ({ serverData }: DashboardProps)=>{
 
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>(serverData.data || []);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isErrorModal, setIsErrorModal] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>("Modal");
   const [modalComponent, setModalComponent] = useState<ReactNode>(undefined);
 
-  useEffect(()=>{
-    setIsLoading(true);
-    if(serverData.code === StatusCodes.OK && serverData.data){
-      setOrganizations(serverData.data);
-    }
-    setIsLoading(false);
-  },[]);
 
   const shouldDelete = (organization: Organization)=>{
     setIsErrorModal(false);
@@ -173,7 +166,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
           )
         }
         { isLoading && <Loading isFullscreen onClick={()=> setIsLoading(false)}/> }
-        { isModalOpen && <Modal isError={isErrorModal} title={modalTitle} onClose={()=> setIsModalOpen(false)} children={modalComponent} /> }
+        { isModalOpen && <Modal isError={isErrorModal} title={modalTitle} onClose={()=> setIsModalOpen(false)}>{modalComponent}</Modal> }
       </div>
     </>
   );
