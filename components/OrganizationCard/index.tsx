@@ -1,4 +1,4 @@
-import styles from '../../styles/OrganizationCard.module.css';
+import styles from './OrganizationCard.module.css';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { FiEdit } from 'react-icons/fi';
 import { Organization } from '../../common/types';
