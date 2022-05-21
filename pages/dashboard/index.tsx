@@ -10,6 +10,7 @@ import { ReactNode, useEffect, useState } from "react";
 import Loading from "../../components/Loading";
 import Modal from "../../components/Modal";
 import ConfirmDelete from "../../components/ConfirmDelete";
+import EditOrganization from "../../components/EditOrganization";
 
 export const getServerSideProps = async () => {
   
@@ -118,10 +119,14 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
     setIsModalOpen(false);
   }
 
+  const handleEdit = async (organization: Organization) => {
+    setIsModalOpen(false);
+  }
+
   const onEdit = (organization: Organization)=>{
     setIsErrorModal(false);
     setModalTitle(`Edit ${organization.name}`);
-    setModalComponent(<p>Currently Under Development. Enjoy The Grand Line And Check Back Later!</p>);
+    setModalComponent(<EditOrganization organization={organization} onCancel={handleCancel} onEdit={handleEdit} />);
     setIsModalOpen(true);
   }
 

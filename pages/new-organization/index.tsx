@@ -19,7 +19,7 @@ const NewOrganization = ()=>{
     firstField.current?.focus();
   }, []);
 
-  const handleClick = (e:any) => {
+  const handleClick = () => {
     addform.current?.requestSubmit();
   }
 
@@ -59,7 +59,7 @@ const NewOrganization = ()=>{
           <form ref={addform} onSubmit={handleSubmit} className={styles.add_organization_form}>
             <div className={styles.add_organization_form_item}>
               <label htmlFor="organization-name">Name</label>
-              <input ref={firstField} id="organization-name" type="text" placeholder="Organization name" value={organizationName} onChange={((e)=>setOrganizationName(e.target.value))} minLength={3} maxLength={255} required/>
+              <input ref={firstField} id="organization-name" type="text" placeholder="Organization name" value={organizationName} onChange={((e)=>setOrganizationName(e.target.value))} minLength={3} maxLength={255} pattern="[A-z0-9]{3,}" required/>
             </div>
             <div className={styles.add_organization_form_item}>
               <label htmlFor="organization-description">Description</label>
