@@ -5,10 +5,9 @@ import styles from './EditOrganization.module.css';
 interface EditOrganizationProps {
   organization: Organization; 
   onEdit: (organization: Organization, updateOrganization: any)=>Promise<void>;
-  onCancel : ()=>void;
 }
 
-export default function EditOrganization( {organization, onCancel, onEdit} : EditOrganizationProps) {
+export default function EditOrganization( {organization, onEdit} : EditOrganizationProps) {
 
   const [organizationData, setOrganizationData] = useState<Organization>(organization);
   const editOrganizationForm = useRef<HTMLFormElement>(null);
@@ -25,10 +24,6 @@ export default function EditOrganization( {organization, onCancel, onEdit} : Edi
       ...organizationData,
       description
     });
-  }
-
-  const handleClick = () => {
-    editOrganizationForm.current?.requestSubmit();
   }
 
   const handleSubmit = (e:FormEvent)=>{
@@ -54,10 +49,6 @@ export default function EditOrganization( {organization, onCancel, onEdit} : Edi
           <textarea id="organization-description" placeholder="What does your origanization do?" value={organizationData.description} onChange={((e)=>setorganizationDescription(e.target.value))} required minLength={10} />
         </div>
       </form>
-      <div className={styles.edit_organization_actions}>
-        <button className={styles.edit_organization_actions_cancel} onClick={onCancel}>Cancel</button>
-        <button className={styles.edit_organization_actions_cta} onClick={handleClick}>Update</button>
-      </div>
     </div>
   );
 }

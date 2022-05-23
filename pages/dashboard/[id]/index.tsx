@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { ApplicationApiOrganizationResponse, HTTP_SUCCESS_UPPER_CODE, Organization } from "../../../common/types";
+import BaseError from "../../../components/BaseError";
+import EditOrganization from "../../../components/EditOrganization";
+import PrimaryButton from "../../../components/PrimaryButton";
+import SecondaryButton from "../../../components/SecondaryButton";
 import Topbar from "../../../components/Topbar";
 import errorHandler, { serverErrorResponse } from "../../../utils/apiErrorHandler";
 
@@ -116,7 +120,28 @@ interface OrganizationPageProps {
 
 const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
 
-  const [organization, setOrganization] = useState<Organization | null>(staticData.data);
+  if(staticData.data === null){
+    return <BaseError />
+  }
+
+  const [organization, setOrganization] = useState<Organization>(staticData.data);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const handleEdit = async (organization:Organization, updateOrganization:any) => {
+    
+  }
+
+  const handleClick = ()=>{
+    setIsEditing(true);
+  }
+
+  const handleCancel = ()=>{
+    setIsEditing(false);
+  }
+
+  const handleSave = ()=>{
+
+  }
 
   return (
     <>
@@ -126,15 +151,33 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
       </Head>
       <div className="container">
         <Topbar title={organization?.name || ""} >
-          <button className="topbar_primary_action">
-            <Link href="/new-organization">
-              <a><FiEdit /> Edit</a>
-            </Link>
-          </button>
+          {
+            isEditing ? (
+              <>
+                <SecondaryButton className="spaced_button" onClick={handleCancel}>
+                  <span>Cancel</span>
+                </SecondaryButton>
+                <PrimaryButton className="spaced_button" onClick={handleSave}>
+                  <span>Save</span>
+                </PrimaryButton>
+              </>
+            ): (
+              <PrimaryButton className="spaced_button" onClick={handleClick}>
+                <span>Edit</span>
+              </PrimaryButton>
+            )
+          }
         </Topbar>
-        <div>
-          {organization?.description}
-        </div>
+        {
+          isEditing ? (
+            <EditOrganization organization={organization!} onEdit={handleEdit} />
+          ):
+          (
+          <div>
+              {organization?.description}
+            </div>
+          )
+        }
       </div>
     </>
   );

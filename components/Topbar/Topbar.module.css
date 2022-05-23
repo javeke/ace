@@ -1,7 +1,15 @@
 .topbar{
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 32px;
   padding: 1rem 0;
   margin-bottom: 2rem;
+}
+
+.topbar_actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }

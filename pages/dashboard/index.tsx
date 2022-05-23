@@ -10,8 +10,9 @@ import { ReactNode, useState } from "react";
 import Loading from "../../components/Loading";
 import Modal from "../../components/Modal";
 import ConfirmDelete from "../../components/ConfirmDelete";
-import EditOrganization from "../../components/EditOrganization";
 import Topbar from "../../components/Topbar";
+import BaseError from "../../components/BaseError";
+import PrimaryButton from "../../components/PrimaryButton";
 
 export const getServerSideProps = async () => {
   
@@ -151,18 +152,9 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
     }
   }
 
-  const onEdit = (organization: Organization)=>{
-    setIsErrorModal(false);
-    setModalTitle(`Edit ${organization.name}`);
-    setModalComponent(<EditOrganization organization={organization} onCancel={handleCancel} onEdit={handleEdit} />);
-    setIsModalOpen(true);
-  }
-
   if (serverData.error) {
     return (
-      <div className="container center-text">
-        <p>An Error Occured</p>
-      </div>
+      <BaseError />
     );
   }
 
@@ -174,11 +166,11 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
       </Head>
       <div className="container">
         <Topbar title="Organization Dashboard" >
-          <button className="topbar_primary_action">
+          <PrimaryButton className="spaced_button">
             <Link href="/new-organization">
-              <a><IoMdAdd /> Create</a>
+              <a><IoMdAdd />Create</a>
             </Link>
-          </button>
+          </PrimaryButton>
         </Topbar>
 
         {
