@@ -2,7 +2,6 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
-import AddPostImage from '../../public/add_post.svg';
 import styles from '../../styles/NewOrganization.module.css';
 
 const NewOrganization = ()=>{
@@ -19,7 +18,7 @@ const NewOrganization = ()=>{
     firstField.current?.focus();
   }, []);
 
-  const handleClick = (e:any) => {
+  const handleClick = () => {
     addform.current?.requestSubmit();
   }
 

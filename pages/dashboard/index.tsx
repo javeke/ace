@@ -6,10 +6,11 @@ import { IoMdAdd } from 'react-icons/io';
 import { StatusCodes } from "http-status-codes";
 import Link from "next/link";
 import errorHandler, { serverErrorResponse } from "../../utils/apiErrorHandler";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import Loading from "../../components/Loading";
 import Modal from "../../components/Modal";
 import ConfirmDelete from "../../components/ConfirmDelete";
+import EditOrganization from "../../components/EditOrganization";
 
 export const getServerSideProps = async () => {
   
@@ -118,10 +119,41 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
     setIsModalOpen(false);
   }
 
+  const handleEdit = async (organization: Organization, updateOrganization:any) => {
+    setIsModalOpen(false);
+    setIsLoading(true);
+    try {
+      console.log(updateOrganization);
+      const response  = await fetch(`/api/v1/organization/${organization.organizationId}`, {
+        method: "PUT",
+        body: JSON.stringify(updateOrganization)
+      });
+
+      if(response.status === StatusCodes.NOT_MODIFIED){
+        alert(`Could not update ${organization.name}`);
+      }
+
+      if(response.status === StatusCodes.INTERNAL_SERVER_ERROR){
+        alert("A server error occurred");
+      }
+
+      if(response.status ===  StatusCodes.OK){
+        alert(`Updated ${organization.name}`);
+      }
+    }
+    catch(error){
+      alert("No request was sent");
+    }
+    finally{
+      setIsLoading(false);
+      setIsModalOpen(false);
+    }
+  }
+
   const onEdit = (organization: Organization)=>{
     setIsErrorModal(false);
     setModalTitle(`Edit ${organization.name}`);
-    setModalComponent(<p>Currently Under Development. Enjoy The Grand Line And Check Back Later!</p>);
+    setModalComponent(<EditOrganization organization={organization} onCancel={handleCancel} onEdit={handleEdit} />);
     setIsModalOpen(true);
   }
 
