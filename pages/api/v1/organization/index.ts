@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ApplicationApiResponse, ErrorDataResponse, HTTP_SUCCESS_UPPER_CODE, Organization, OrganizationDataResponse } from "../../../../common/types";
-import organizations from '../../../../dataUtils/organizations.json';
+import { ApplicationApiResponse, HTTP_SUCCESS_UPPER_CODE } from "../../../../common/types";
 import errorHandler, { serverErrorResponse } from "../../../../utils/apiErrorHandler";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ApplicationApiResponse>){

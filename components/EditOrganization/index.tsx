@@ -4,7 +4,7 @@ import styles from './EditOrganization.module.css';
 
 interface EditOrganizationProps {
   organization: Organization; 
-  onEdit: (organization: Organization)=>Promise<void>;
+  onEdit: (organization: Organization, updateOrganization: any)=>Promise<void>;
   onCancel : ()=>void;
 }
 
@@ -36,7 +36,10 @@ export default function EditOrganization( {organization, onCancel, onEdit} : Edi
 
     // organizationData.description.match(/[A-z0-9]{10,}/) 
 
-    onEdit(organization)
+    onEdit(organization, {
+      "name": organization.name !== organizationData.name ? organizationData.name : undefined,
+      "description": organization.description !== organizationData.description ? organizationData.description : undefined,
+    });
   }
 
   return (
@@ -44,7 +47,7 @@ export default function EditOrganization( {organization, onCancel, onEdit} : Edi
       <form onSubmit={handleSubmit} className={styles.edit_organization_form} ref={editOrganizationForm}>
         <div className={styles.edit_organization_form_item}>
           <label htmlFor="organization-name">Name</label>
-          <input id="organization-name" type="text" placeholder="Organization name" value={organizationData.name} onChange={((e)=>setOrganizationName(e.target.value))} minLength={3} maxLength={255} pattern="[A-z0-9]{3,}" required/>
+          <input id="organization-name" type="text" placeholder="Organization name" value={organizationData.name} onChange={((e)=>setOrganizationName(e.target.value))} minLength={3} maxLength={255} required/>
         </div>
         <div className={styles.edit_organization_form_item}>
           <label htmlFor="organization-description">Description</label>

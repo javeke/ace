@@ -2,7 +2,6 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
-import AddPostImage from '../../public/add_post.svg';
 import styles from '../../styles/NewOrganization.module.css';
 
 const NewOrganization = ()=>{
@@ -59,7 +58,7 @@ const NewOrganization = ()=>{
           <form ref={addform} onSubmit={handleSubmit} className={styles.add_organization_form}>
             <div className={styles.add_organization_form_item}>
               <label htmlFor="organization-name">Name</label>
-              <input ref={firstField} id="organization-name" type="text" placeholder="Organization name" value={organizationName} onChange={((e)=>setOrganizationName(e.target.value))} minLength={3} maxLength={255} pattern="[A-z0-9]{3,}" required/>
+              <input ref={firstField} id="organization-name" type="text" placeholder="Organization name" value={organizationName} onChange={((e)=>setOrganizationName(e.target.value))} minLength={3} maxLength={255} required/>
             </div>
             <div className={styles.add_organization_form_item}>
               <label htmlFor="organization-description">Description</label>
