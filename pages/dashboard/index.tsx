@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { ApplicationApiResponse, HTTP_SUCCESS_UPPER_CODE, Organization, OrganizationDataResponse } from "../../common/types";
+import { ApplicationApiOrganizationsResponse, HTTP_SUCCESS_UPPER_CODE, Organization, OrganizationsDataResponse } from "../../common/types";
 import OrganizationCard from "../../components/OrganizationCard";
 import styles from "../../styles/Dashboard.module.css";
 import { IoMdAdd } from 'react-icons/io';
@@ -11,6 +11,7 @@ import Loading from "../../components/Loading";
 import Modal from "../../components/Modal";
 import ConfirmDelete from "../../components/ConfirmDelete";
 import EditOrganization from "../../components/EditOrganization";
+import Topbar from "../../components/Topbar";
 
 export const getServerSideProps = async () => {
   
@@ -63,7 +64,7 @@ export const getServerSideProps = async () => {
 
 
 type DashboardProps = {
-  serverData: ApplicationApiResponse
+  serverData: ApplicationApiOrganizationsResponse
 }
 
 const Dashboard = ({ serverData }: DashboardProps)=>{
@@ -102,7 +103,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
 
       if(response.status ===  StatusCodes.OK){
         alert(`Deleted ${organization.name}`);
-        const newData: OrganizationDataResponse = await response.json();
+        const newData: OrganizationsDataResponse = await response.json();
         setOrganizations(newData.data);
       }
     }
@@ -172,22 +173,20 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
         <meta name="description" content="This is the organization dashboard for Ace" />
       </Head>
       <div className="container">
-
-        <div className="topbar">
-          <h2 className="topbar_title">Organization Dashboard</h2>
-          <button className="topbar_add_action">
+        <Topbar title="Organization Dashboard" >
+          <button className="topbar_primary_action">
             <Link href="/new-organization">
-              <a>Create <IoMdAdd /></a>
+              <a><IoMdAdd /> Create</a>
             </Link>
           </button>
-        </div>
+        </Topbar>
 
         {
           ((organizations.length > 0)) ? (
             <div className={styles.card_container}>
               {
                 organizations.map((organization)=>(
-                  <OrganizationCard key={organization.organizationId} organization={organization} onDelete={shouldDelete} onEdit={onEdit} />
+                  <OrganizationCard key={organization.organizationId} organization={organization} onDelete={shouldDelete} />
                 ))
               }
             </div>

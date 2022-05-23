@@ -34,7 +34,7 @@ const NewOrganization = ()=>{
       })
     })
     .then(res=>res.json())
-    .then((data)=>{
+    .then(()=>{
       router.push('/dashboard');
     })
     .catch(()=>{

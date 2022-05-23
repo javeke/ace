@@ -15,6 +15,10 @@
   color: var(--secondary-color);
 }
 
+.card_title_link:hover {
+  text-decoration: underline;
+}
+
 .card_header_actions {
   display: flex;
   gap: 0.5rem;

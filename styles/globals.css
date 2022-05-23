@@ -64,15 +64,8 @@ a {
   text-align: center;
 }
 
-.topbar{
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  padding: 1rem 0;
-  margin-bottom: 2rem;
-}
 
-.topbar .topbar_add_action {
+.topbar_primary_action {
   color: var(--primary-color);
   background-color: var(--primary-bg-color);
   box-shadow: var(--box-shadow) var(--box-shadow-color);
@@ -81,19 +74,19 @@ a {
   font-weight: bold;
 }
 
-.topbar_add_action :is(a, span) {
+.topbar_primary_action :is(a, span) {
   padding: 0.5rem 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   cursor: pointer;
 }
 
-.topbar .topbar_add_action:hover{
+.topbar_primary_action:hover{
   background-color: var(--primary-bg-color-900);
 }
 
-.topbar_add_action svg {
+.topbar_primary_action svg {
   font-size: 16px;
 }

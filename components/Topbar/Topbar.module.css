@@ -1,0 +1,7 @@
+.topbar{
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
