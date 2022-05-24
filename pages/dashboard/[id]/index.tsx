@@ -1,8 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Head from "next/head";
-import Link from "next/link";
-import { useState } from "react";
-import { FiEdit } from "react-icons/fi";
+import { useRef, useState } from "react";
 import { ApplicationApiOrganizationResponse, HTTP_SUCCESS_UPPER_CODE, Organization } from "../../../common/types";
 import BaseError from "../../../components/BaseError";
 import EditOrganization from "../../../components/EditOrganization";
@@ -10,6 +8,9 @@ import PrimaryButton from "../../../components/PrimaryButton";
 import SecondaryButton from "../../../components/SecondaryButton";
 import Topbar from "../../../components/Topbar";
 import errorHandler, { serverErrorResponse } from "../../../utils/apiErrorHandler";
+import styles from '../../../styles/OrganizationPage.module.css';
+import Loading from "../../../components/Loading";
+import { isEmptyObject } from "../../../utils";
 
 export async function getStaticPaths() {
   const apiEndpoint = process.env.API_ENDPOINT!;
@@ -120,15 +121,59 @@ interface OrganizationPageProps {
 
 const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
 
+ 
+
   if(staticData.data === null){
     return <BaseError />
   }
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const handleSubmitRef = useRef<HTMLFormElement>(null);
   const [organization, setOrganization] = useState<Organization>(staticData.data);
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  const handleEdit = async (organization:Organization, updateOrganization:any) => {
+  const handleEdit = async (organization: Organization, updateOrganization:any) => {
+    const NO_CHANGES_MESSAGE = "No changes were made.";
+
+    setIsLoading(true);
+    try {
+      console.log(updateOrganization);
     
+      if(isEmptyObject(updateOrganization)) {
+        throw new Error(NO_CHANGES_MESSAGE);
+      }
+
+      const response  = await fetch(`/api/v1/organization/${organization.organizationId}`, {
+        method: "PUT",
+        body: JSON.stringify(updateOrganization)
+      });
+
+      if(response.status === StatusCodes.NOT_MODIFIED){
+        alert(`Could not update ${organization.name}`);
+      }
+
+      if(response.status === StatusCodes.INTERNAL_SERVER_ERROR){
+        alert("A server error occurred");
+      }
+
+      if(response.status ===  StatusCodes.OK){
+        alert(`Updated ${organization.name}`);
+        const data: ApplicationApiOrganizationResponse = await response.json();
+        setOrganization(data.data!);
+      }
+    }
+    catch(error: any){
+      if(error.message === NO_CHANGES_MESSAGE){
+        alert(error.message);
+      }
+      else{
+        alert("No request was sent.");
+      }
+    }
+    finally{
+      setIsEditing(false);
+      setIsLoading(false);
+    }
   }
 
   const handleClick = ()=>{
@@ -140,7 +185,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
   }
 
   const handleSave = ()=>{
-
+    handleSubmitRef.current?.requestSubmit();
   }
 
   return (
@@ -170,14 +215,20 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
         </Topbar>
         {
           isEditing ? (
-            <EditOrganization organization={organization!} onEdit={handleEdit} />
+            <div className={styles.edit_organization_page}>
+              <EditOrganization organization={organization} onEdit={handleEdit} formRef={handleSubmitRef} />
+              <div className={styles.edit_organization_page_placeholder}>
+                <img src="/review.svg" alt="Review" />
+              </div>
+            </div>
           ):
           (
-          <div>
+            <div>
               {organization?.description}
             </div>
           )
         }
+        { isLoading && <Loading isFullscreen onClick={()=> setIsLoading(false)}/> }
       </div>
     </>
   );

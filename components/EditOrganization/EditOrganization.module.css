@@ -35,6 +35,10 @@
   border-radius: 6px;
 }
 
+.edit_organization_form_item textarea {
+  min-height: 6rem;
+}
+
 
 .edit_organization_actions {
   display: flex;
