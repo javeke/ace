@@ -2,24 +2,32 @@ import styles from './OrganizationCard.module.css';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { FiEdit } from 'react-icons/fi';
 import { Organization } from '../../common/types';
+import Link from 'next/link';
 
 interface OrganizationCardProps {
   organization: Organization,
-  onDelete: (data: Organization)=>void,
-  onEdit: (data: Organization)=>void
+  onDelete: (data: Organization)=>void
 }
 
-const OrganizationCard = ({ organization, onDelete, onEdit }: OrganizationCardProps)=>{
+const OrganizationCard = ({ organization, onDelete }: OrganizationCardProps)=>{
 
   return (
     <div className={styles.card}>
       <div className={styles.card_header}>
         <div>
-          <h3 className={styles.card_title}>{organization.name}</h3>
+          <Link href={`/dashboard/${organization.organizationId}`}>
+            <a className={styles.card_title_link}>
+              <h3 className={styles.card_title}>{organization.name}</h3>
+            </a>
+          </Link>
         </div>
         <div className={styles.card_header_actions}>
-          <span onClick={()=> onEdit(organization)}>
-            <FiEdit />
+          <span>
+            <Link href={`/dashboard/${organization.organizationId}?action=edit`}>
+              <a>
+                <FiEdit />
+              </a>
+            </Link>
           </span>
           <span onClick={()=>onDelete(organization)}>
             <RiDeleteBin6Line />

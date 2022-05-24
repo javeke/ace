@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { ApplicationApiResponse, HTTP_SUCCESS_UPPER_CODE, Organization, OrganizationDataResponse } from "../../common/types";
+import { ApplicationApiOrganizationsResponse, HTTP_SUCCESS_UPPER_CODE, Organization, OrganizationsDataResponse } from "../../common/types";
 import OrganizationCard from "../../components/OrganizationCard";
 import styles from "../../styles/Dashboard.module.css";
 import { IoMdAdd } from 'react-icons/io';
@@ -10,7 +10,9 @@ import { ReactNode, useState } from "react";
 import Loading from "../../components/Loading";
 import Modal from "../../components/Modal";
 import ConfirmDelete from "../../components/ConfirmDelete";
-import EditOrganization from "../../components/EditOrganization";
+import Topbar from "../../components/Topbar";
+import BaseError from "../../components/BaseError";
+import PrimaryButton from "../../components/PrimaryButton";
 
 export const getServerSideProps = async () => {
   
@@ -63,7 +65,7 @@ export const getServerSideProps = async () => {
 
 
 type DashboardProps = {
-  serverData: ApplicationApiResponse
+  serverData: ApplicationApiOrganizationsResponse
 }
 
 const Dashboard = ({ serverData }: DashboardProps)=>{
@@ -102,7 +104,7 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
 
       if(response.status ===  StatusCodes.OK){
         alert(`Deleted ${organization.name}`);
-        const newData: OrganizationDataResponse = await response.json();
+        const newData: OrganizationsDataResponse = await response.json();
         setOrganizations(newData.data);
       }
     }
@@ -119,49 +121,9 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
     setIsModalOpen(false);
   }
 
-  const handleEdit = async (organization: Organization, updateOrganization:any) => {
-    setIsModalOpen(false);
-    setIsLoading(true);
-    try {
-      console.log(updateOrganization);
-      const response  = await fetch(`/api/v1/organization/${organization.organizationId}`, {
-        method: "PUT",
-        body: JSON.stringify(updateOrganization)
-      });
-
-      if(response.status === StatusCodes.NOT_MODIFIED){
-        alert(`Could not update ${organization.name}`);
-      }
-
-      if(response.status === StatusCodes.INTERNAL_SERVER_ERROR){
-        alert("A server error occurred");
-      }
-
-      if(response.status ===  StatusCodes.OK){
-        alert(`Updated ${organization.name}`);
-      }
-    }
-    catch(error){
-      alert("No request was sent");
-    }
-    finally{
-      setIsLoading(false);
-      setIsModalOpen(false);
-    }
-  }
-
-  const onEdit = (organization: Organization)=>{
-    setIsErrorModal(false);
-    setModalTitle(`Edit ${organization.name}`);
-    setModalComponent(<EditOrganization organization={organization} onCancel={handleCancel} onEdit={handleEdit} />);
-    setIsModalOpen(true);
-  }
-
   if (serverData.error) {
     return (
-      <div className="container center-text">
-        <p>An Error Occured</p>
-      </div>
+      <BaseError />
     );
   }
 
@@ -172,22 +134,20 @@ const Dashboard = ({ serverData }: DashboardProps)=>{
         <meta name="description" content="This is the organization dashboard for Ace" />
       </Head>
       <div className="container">
-
-        <div className="topbar">
-          <h2 className="topbar_title">Organization Dashboard</h2>
-          <button className="topbar_add_action">
+        <Topbar title="Organization Dashboard" >
+          <PrimaryButton className="spaced_button">
             <Link href="/new-organization">
-              <a>Create <IoMdAdd /></a>
+              <a><IoMdAdd />Create</a>
             </Link>
-          </button>
-        </div>
+          </PrimaryButton>
+        </Topbar>
 
         {
           ((organizations.length > 0)) ? (
             <div className={styles.card_container}>
               {
                 organizations.map((organization)=>(
-                  <OrganizationCard key={organization.organizationId} organization={organization} onDelete={shouldDelete} onEdit={onEdit} />
+                  <OrganizationCard key={organization.organizationId} organization={organization} onDelete={shouldDelete} />
                 ))
               }
             </div>

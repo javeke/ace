@@ -1,14 +1,14 @@
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, RefObject, useRef, useState } from "react";
 import { Organization } from "../../common/types";
 import styles from './EditOrganization.module.css';
 
 interface EditOrganizationProps {
   organization: Organization; 
   onEdit: (organization: Organization, updateOrganization: any)=>Promise<void>;
-  onCancel : ()=>void;
+  formRef?: RefObject<HTMLFormElement>;
 }
 
-export default function EditOrganization( {organization, onCancel, onEdit} : EditOrganizationProps) {
+export default function EditOrganization( {organization, onEdit, formRef} : EditOrganizationProps) {
 
   const [organizationData, setOrganizationData] = useState<Organization>(organization);
   const editOrganizationForm = useRef<HTMLFormElement>(null);
@@ -27,10 +27,6 @@ export default function EditOrganization( {organization, onCancel, onEdit} : Edi
     });
   }
 
-  const handleClick = () => {
-    editOrganizationForm.current?.requestSubmit();
-  }
-
   const handleSubmit = (e:FormEvent)=>{
     e.preventDefault();
 
@@ -44,20 +40,16 @@ export default function EditOrganization( {organization, onCancel, onEdit} : Edi
 
   return (
     <div className={styles.edit_organization}>
-      <form onSubmit={handleSubmit} className={styles.edit_organization_form} ref={editOrganizationForm}>
+      <form onSubmit={handleSubmit} className={styles.edit_organization_form} ref={formRef}>
         <div className={styles.edit_organization_form_item}>
           <label htmlFor="organization-name">Name</label>
           <input id="organization-name" type="text" placeholder="Organization name" value={organizationData.name} onChange={((e)=>setOrganizationName(e.target.value))} minLength={3} maxLength={255} required/>
         </div>
         <div className={styles.edit_organization_form_item}>
           <label htmlFor="organization-description">Description</label>
-          <textarea id="organization-description" placeholder="What does your origanization do?" value={organizationData.description} onChange={((e)=>setorganizationDescription(e.target.value))} required minLength={10} />
+          <textarea id="organization-description" placeholder="What does your organization do?" value={organizationData.description} onChange={((e)=>setorganizationDescription(e.target.value))} required minLength={10} />
         </div>
       </form>
-      <div className={styles.edit_organization_actions}>
-        <button className={styles.edit_organization_actions_cancel} onClick={onCancel}>Cancel</button>
-        <button className={styles.edit_organization_actions_cta} onClick={handleClick}>Update</button>
-      </div>
     </div>
   );
 }

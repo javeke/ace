@@ -1,0 +1,13 @@
+.primary_button {
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--primary-inverse-color);
+  background-color: var(--primary-inverse-bg-color);
+  border: 1px solid var(--primary-inverse-bg-color);
+  font-weight: bold;
+}
+
+.primary_button:hover {
+  filter: drop-shadow(0 0 3px var(--secondary-color));
+}

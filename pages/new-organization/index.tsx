@@ -2,6 +2,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
+import PrimaryButton from "../../components/PrimaryButton";
+import Topbar from "../../components/Topbar";
 import styles from '../../styles/NewOrganization.module.css';
 
 const NewOrganization = ()=>{
@@ -34,7 +36,7 @@ const NewOrganization = ()=>{
       })
     })
     .then(res=>res.json())
-    .then((data)=>{
+    .then(()=>{
       router.push('/dashboard');
     })
     .catch(()=>{
@@ -49,10 +51,11 @@ const NewOrganization = ()=>{
         <meta name="description" content="This is to add a new organization to the Ace Platfrom" />
       </Head>
       <div className="container">
-        <div className="topbar">
-          <h2 className="topbar_title">New Organization</h2>
-          <button onClick={handleClick} className="topbar_add_action"><span>Save <AiOutlineFileAdd /></span></button>
-        </div>
+        <Topbar title="New Organization" >
+          <PrimaryButton className="spaced_button"onClick={handleClick}>
+            <span>Save <AiOutlineFileAdd /></span>
+          </PrimaryButton>
+        </Topbar>
 
         <div className={styles.add_organization}>
           <form ref={addform} onSubmit={handleSubmit} className={styles.add_organization_form}>

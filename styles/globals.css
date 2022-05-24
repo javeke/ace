@@ -4,7 +4,7 @@
   --primary-inverse-color: #fff;
   --secondary-inverse-color: #e2e2e2;
   
-  --primary-bg-color: #fff;
+  --primary-bg-color: #efefef;
   --secondary-bg-color: #d6d6d8;
   --primary-inverse-bg-color: #303033;
   --secondary-inverse-bg-color: #4f4f51;
@@ -39,7 +39,7 @@ body {
   --primary-bg-color-900: #252527;
   --secondary-bg-color: #4f4f51;
 
-  --primary-inverse-bg-color: #fff;
+  --primary-inverse-bg-color: #efefef;
   --secondary-inverse-bg-color: #d6d6d8;
 
   --box-shadow-color: #303030;
@@ -64,36 +64,15 @@ a {
   text-align: center;
 }
 
-.topbar{
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  padding: 1rem 0;
-  margin-bottom: 2rem;
-}
-
-.topbar .topbar_add_action {
-  color: var(--primary-color);
-  background-color: var(--primary-bg-color);
-  box-shadow: var(--box-shadow) var(--box-shadow-color);
-  border: 1px solid var(--secondary-bg-color);
-  border-radius: 6px;
-  font-weight: bold;
-}
-
-.topbar_add_action :is(a, span) {
+.spaced_button :is(a, span) {
   padding: 0.5rem 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   cursor: pointer;
 }
 
-.topbar .topbar_add_action:hover{
-  background-color: var(--primary-bg-color-900);
-}
-
-.topbar_add_action svg {
+.spaced_button svg {
   font-size: 16px;
 }

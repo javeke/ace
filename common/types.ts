@@ -12,12 +12,18 @@ export interface ApplicationResponse {
   error?: string;
 }
 
-export interface OrganizationDataResponse extends ApplicationResponse {
+export interface OrganizationsDataResponse extends ApplicationResponse {
   data: Organization[]
+}
+
+export interface OrganizationDataResponse extends ApplicationResponse {
+  data: Organization
 }
 
 export interface ErrorDataResponse extends ApplicationResponse {
   data: null
 }
 
-export type ApplicationApiResponse = OrganizationDataResponse | ErrorDataResponse;
+export type ApplicationApiOrganizationsResponse = OrganizationsDataResponse | ErrorDataResponse;
+
+export type ApplicationApiOrganizationResponse = OrganizationDataResponse | ErrorDataResponse;
