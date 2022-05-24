@@ -121,16 +121,14 @@ interface OrganizationPageProps {
 
 const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
 
- 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const handleSubmitRef = useRef<HTMLFormElement>(null);
+  const [organization, setOrganization] = useState<Organization | null>(staticData.data);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   if(staticData.data === null){
     return <BaseError />
   }
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const handleSubmitRef = useRef<HTMLFormElement>(null);
-  const [organization, setOrganization] = useState<Organization>(staticData.data);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const handleEdit = async (organization: Organization, updateOrganization:any) => {
     const NO_CHANGES_MESSAGE = "No changes were made.";
@@ -216,7 +214,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
         {
           isEditing ? (
             <div className={styles.edit_organization_page}>
-              <EditOrganization organization={organization} onEdit={handleEdit} formRef={handleSubmitRef} />
+              <EditOrganization organization={organization!} onEdit={handleEdit} formRef={handleSubmitRef} />
               <div className={styles.edit_organization_page_placeholder}>
                 <img src="/review.svg" alt="Review" />
               </div>
