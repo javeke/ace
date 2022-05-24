@@ -1,11 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ApplicationApiResponse, HTTP_SUCCESS_UPPER_CODE } from "../../../../common/types";
+import { ApplicationApiOrganizationResponse, HTTP_SUCCESS_UPPER_CODE } from "../../../../common/types";
 import errorHandler, { serverErrorResponse } from "../../../../utils/apiErrorHandler";
 
 // TODO: Complete this api call to the javeke ws to remove organization from DB
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<ApplicationApiResponse>){
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ApplicationApiOrganizationResponse>){
 
   const apiEndpoint = process.env.API_ENDPOINT!;
   const organizationId = req.query.id;
@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       if(response.status === StatusCodes.NO_CONTENT){
         console.log("No Content Response. No organization was updated.");
         return  res.status(StatusCodes.NO_CONTENT).json({
-          data: [],
+          data: null,
           code: StatusCodes.NO_CONTENT,
           msg:"No Organizations Available"
         });
