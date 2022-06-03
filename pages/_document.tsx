@@ -5,7 +5,7 @@ export default function CustomDocument(){
   return (
     <Html>
       <Head />
-      <body className="dark-theme">
+      <body>
         <Main />
         <NextScript />
       </body>

@@ -95,7 +95,7 @@ export async function getStaticProps({ params } : StaticProps) {
     }
 
     const data: Organization = await response.json();
-
+    console.log(data);
     return {
       props : { 
         staticData : {
@@ -134,9 +134,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
     const NO_CHANGES_MESSAGE = "No changes were made.";
 
     setIsLoading(true);
-    try {
-      console.log(updateOrganization);
-    
+    try {    
       if(isEmptyObject(updateOrganization)) {
         throw new Error(NO_CHANGES_MESSAGE);
       }
@@ -221,9 +219,24 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
             </div>
           ):
           (
-            <div>
-              {organization?.description}
-            </div>
+            <>
+              <div>
+                {organization?.description}
+              </div>
+              <h3>Devices</h3> 
+              {
+                organization?.devices?.length ? (
+                  organization.devices.map((device)=>{
+                    return (
+                      <h5 key={device.id}>{device.name}</h5>
+                    )
+                  })
+                )
+                : (
+                  <p>No devices yet</p>
+                )
+              }
+            </>
           )
         }
         { isLoading && <Loading isFullscreen onClick={()=> setIsLoading(false)}/> }

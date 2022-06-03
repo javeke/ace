@@ -1,9 +1,15 @@
 export const HTTP_SUCCESS_UPPER_CODE = 299;
 
+export interface Device {
+  id: string;
+  name:  string;
+}
+
 export interface Organization {
   organizationId: string,
   name: string,
   description: string;
+  devices: Device[] | null
 }
 
 export interface ApplicationResponse {
