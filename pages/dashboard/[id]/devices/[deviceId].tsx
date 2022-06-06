@@ -1,9 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useState } from "react";
-import { ApplicationApiDeviceResponse, Device, HTTP_SUCCESS_UPPER_CODE, Organization } from "../../../../common/types";
+import { ApplicationApiDeviceResponse, Device, DeviceData, HTTP_SUCCESS_UPPER_CODE, Organization } from "../../../../common/types";
 import errorHandler, { serverErrorResponse } from "../../../../utils/apiErrorHandler";
+import { CompatClient, Stomp, StompSubscription } from '@stomp/stompjs';
+import { useEffect } from 'react';
+import SockJS from 'sockjs-client';
+import moment from "moment-timezone";
 
 export async function getStaticPaths(){
   const apiEndpoint = process.env.API_ENDPOINT!;
@@ -101,6 +104,7 @@ export async function getStaticProps({ params } : StaticProps) {
     const data: Device = await response.json();
     return {
       props : { 
+        organizationId : params.id,
         staticData : {
           data,
           code: StatusCodes.OK,
@@ -118,15 +122,70 @@ export async function getStaticProps({ params } : StaticProps) {
   }
 }
 
+const WS_API = process.env.NEXT_PUBLIC_ACE_WS_API_ENDPOINT;
+
 interface DevicePageProps {
+  organizationId?: string;
   staticData: ApplicationApiDeviceResponse
 }
 
-const DevicesPage = ({ staticData }: DevicePageProps)=>{
+const DevicesPage = ({ organizationId, staticData }: DevicePageProps)=>{
 
   const [device, setDevice] = useState<Device | null>(staticData.data);
+  const [isSocketConnected, setIsSocketConnected] = useState<boolean>();
+  const [someText, setSomeText] = useState<string>("");
+  const [stompClient] = useState<CompatClient>(
+    Stomp.over(()=> new SockJS(WS_API || ""))
+  );
+  const [socketSubscription, setSocketSubscription] = useState<StompSubscription>();
+  
+  useEffect(()=>{
+    stompClient.debug = ()=>{};
 
-  const router  = useRouter();
+    stompClient.onDisconnect = () => {  
+      console.log(`Disconnected from channel for ${device?.id}`);
+      setIsSocketConnected(false);
+    }
+
+    stompClient.onConnect = () => {
+      console.log(`Connected to receiving channel for ${device?.id}`);
+
+      const subscription = stompClient.subscribe(`/deviceData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
+        const response = JSON.parse(frame?.body); 
+        console.log(response);
+      });
+
+      setSocketSubscription(subscription);
+
+      setIsSocketConnected(true);
+    }
+
+    console.log(stompClient.state);
+    stompClient.activate();
+    
+    return () => {
+      socketSubscription?.unsubscribe();
+    }
+  }, []);
+
+
+  const handleSubmit = () => {
+
+    const body: DeviceData = {
+      paramName: "Temparature",
+      paramValue: someText || "21",
+      createdAt: moment.tz()
+    };
+
+    stompClient.publish({
+      destination: `/ace/data/organizations/${organizationId}/devices/${device?.id}`,
+      body: JSON.stringify({
+        data: body,
+        message:"New Update for this channel"
+      })
+    });
+  }
+
   return (
     <>
       <Head>
@@ -135,6 +194,10 @@ const DevicesPage = ({ staticData }: DevicePageProps)=>{
       </Head>
       <main className="container">
         {device?.name}
+
+        <label htmlFor="temperature"></label>
+        <input id="temperature" name="temperature" type="text" value={someText} onChange={(e)=>setSomeText(e.target.value)} />
+        <button onClick={handleSubmit} disabled={!isSocketConnected}>Submit</button>
       </main>
     </>
   );

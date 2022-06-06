@@ -1,9 +1,11 @@
+import { Moment } from "moment-timezone";
+
 export const HTTP_SUCCESS_UPPER_CODE = 299;
 
 export interface DeviceData {
   paramName: string;
   paramValue: string;
-  createdAt: Date;
+  createdAt: Moment;
 }
 
 export interface Device {
@@ -13,6 +15,11 @@ export interface Device {
   healthStatus: string;
   dataPoints: DeviceData[] | null;
   type: string;
+}
+
+export interface SocketDataMessage {
+  data: DeviceData;
+  message: string;
 }
 
 export interface Organization {

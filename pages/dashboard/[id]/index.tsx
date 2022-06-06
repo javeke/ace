@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Head from "next/head";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ApplicationApiOrganizationResponse, HTTP_SUCCESS_UPPER_CODE, Organization } from "../../../common/types";
 import BaseError from "../../../components/BaseError";
 import EditOrganization from "../../../components/EditOrganization";
@@ -12,6 +12,9 @@ import styles from '../../../styles/OrganizationPage.module.css';
 import Loading from "../../../components/Loading";
 import { isEmptyObject } from "../../../utils";
 import Link from "next/link";
+import { ActivationState, CompatClient, Stomp, StompSubscription } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import DeviceCard from "../../../components/DeviceCard";
 
 export async function getStaticPaths() {
   const apiEndpoint = process.env.API_ENDPOINT!;
@@ -96,7 +99,6 @@ export async function getStaticProps({ params } : StaticProps) {
     }
 
     const data: Organization = await response.json();
-    console.log(data);
     return {
       props : { 
         staticData : {
@@ -116,6 +118,8 @@ export async function getStaticProps({ params } : StaticProps) {
   }
 }
 
+
+const WS_API = process.env.NEXT_PUBLIC_ACE_WS_API_ENDPOINT;
 interface OrganizationPageProps {
   staticData: ApplicationApiOrganizationResponse
 }
@@ -126,6 +130,29 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
   const handleSubmitRef = useRef<HTMLFormElement>(null);
   const [organization, setOrganization] = useState<Organization | null>(staticData.data);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const [stompClient] = useState<CompatClient>(
+    Stomp.over(()=> new SockJS(WS_API || ""))
+  );
+  
+  useEffect(()=>{
+    stompClient.debug = ()=>{};
+
+    stompClient.onDisconnect = () => {  
+      console.log(`Disconnected from all channels for ${organization?.organizationId}`);
+    }
+
+    stompClient.onConnect = () => {
+      console.log(`Connected to receiving channel for ${organization?.organizationId}`);
+    }
+    
+    stompClient.activate();
+    
+    return () => {
+      stompClient?.deactivate();
+    }
+  }, []);
+
 
   if(staticData.data === null){
     return <BaseError />
@@ -231,27 +258,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
                     organization?.devices?.length ? (
                       organization.devices.map((device)=>{
                         return (
-                          <div key={device.id} className={styles.devices_card}>
-                            <div>
-                              <h4>
-                                <Link href={`${organization.organizationId}/devices/${device.id}`}>
-                                  <a>{device.name}</a>
-                                </Link>
-                              </h4>
-                              <span>{device.healthStatus}</span>
-                              <span>{device.enabled}</span>
-                            </div>
-                            <div>
-                              <h5>Values</h5>
-                              {
-                                device.dataPoints && device.dataPoints.map((dataPoint)=>{
-                                  return (
-                                    <p><span>{dataPoint.paramName}:</span><strong>{dataPoint.paramValue}</strong></p>
-                                  );
-                                })
-                              }
-                            </div>
-                          </div>
+                          <DeviceCard key={device.id} organizationId={organization.organizationId} device={device} stompClient={stompClient} />
                         )
                       })
                     )

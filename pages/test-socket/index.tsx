@@ -2,9 +2,11 @@ import { Stomp } from '@stomp/stompjs';
 import { useEffect } from 'react';
 import SockJS from 'sockjs-client';
 
+const WS_API = process.env.NEXT_PUBLIC_ACE_WS_API_ENDPOINT;
+
 export default function TestSocket(){
   useEffect(()=>{
-    const stompClient = Stomp.over(()=> new SockJS("http://localhost:9092/ace-sock"));
+    const stompClient = Stomp.over(()=> new SockJS(WS_API || ""));
 
     stompClient.debug = ()=>{};
 
