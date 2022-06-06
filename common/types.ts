@@ -1,8 +1,18 @@
 export const HTTP_SUCCESS_UPPER_CODE = 299;
 
+export interface DeviceData {
+  paramName: string;
+  paramValue: string;
+  createdAt: Date;
+}
+
 export interface Device {
   id: string;
   name:  string;
+  enabled: boolean;
+  healthStatus: string;
+  dataPoints: DeviceData[] | null;
+  type: string;
 }
 
 export interface Organization {
@@ -19,17 +29,23 @@ export interface ApplicationResponse {
 }
 
 export interface OrganizationsDataResponse extends ApplicationResponse {
-  data: Organization[]
+  data: Organization[];
 }
 
 export interface OrganizationDataResponse extends ApplicationResponse {
-  data: Organization
+  data: Organization;
+}
+
+export interface DeviceDataResponse extends ApplicationResponse {
+  data: Device;
 }
 
 export interface ErrorDataResponse extends ApplicationResponse {
-  data: null
+  data: null;
 }
 
 export type ApplicationApiOrganizationsResponse = OrganizationsDataResponse | ErrorDataResponse;
 
 export type ApplicationApiOrganizationResponse = OrganizationDataResponse | ErrorDataResponse;
+
+export type ApplicationApiDeviceResponse = DeviceDataResponse | ErrorDataResponse;

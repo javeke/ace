@@ -23,3 +23,21 @@
     display: flex;
   }
 }
+
+.organization_description {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.devices_section {
+  padding: 1rem 0;
+}
+
+.devices_section .devices_section_header {
+  margin-bottom: 2rem;
+}
+
+.devices_card_container {
+  display: grid;
+  gap: 2rem;
+}

@@ -11,6 +11,7 @@ import errorHandler, { serverErrorResponse } from "../../../utils/apiErrorHandle
 import styles from '../../../styles/OrganizationPage.module.css';
 import Loading from "../../../components/Loading";
 import { isEmptyObject } from "../../../utils";
+import Link from "next/link";
 
 export async function getStaticPaths() {
   const apiEndpoint = process.env.API_ENDPOINT!;
@@ -220,22 +221,46 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
           ):
           (
             <>
-              <div>
+              <div className={styles.organization_description}>
                 {organization?.description}
               </div>
-              <h3>Devices</h3> 
-              {
-                organization?.devices?.length ? (
-                  organization.devices.map((device)=>{
-                    return (
-                      <h5 key={device.id}>{device.name}</h5>
+              <section className={styles.devices_section}>
+                <h3 className={styles.devices_section_header}>Devices</h3>
+                <div className={styles.devices_card_container}>
+                  {
+                    organization?.devices?.length ? (
+                      organization.devices.map((device)=>{
+                        return (
+                          <div key={device.id} className={styles.devices_card}>
+                            <div>
+                              <h4>
+                                <Link href={`${organization.organizationId}/devices/${device.id}`}>
+                                  <a>{device.name}</a>
+                                </Link>
+                              </h4>
+                              <span>{device.healthStatus}</span>
+                              <span>{device.enabled}</span>
+                            </div>
+                            <div>
+                              <h5>Values</h5>
+                              {
+                                device.dataPoints && device.dataPoints.map((dataPoint)=>{
+                                  return (
+                                    <p><span>{dataPoint.paramName}:</span><strong>{dataPoint.paramValue}</strong></p>
+                                  );
+                                })
+                              }
+                            </div>
+                          </div>
+                        )
+                      })
                     )
-                  })
-                )
-                : (
-                  <p>No devices yet</p>
-                )
-              }
+                    : (
+                      <p>No devices yet</p>
+                    )
+                  }
+                </div>
+              </section>
             </>
           )
         }
