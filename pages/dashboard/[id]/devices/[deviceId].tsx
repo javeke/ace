@@ -159,12 +159,11 @@ const DevicesPage = ({ organizationId, staticData }: DevicePageProps)=>{
 
       setIsSocketConnected(true);
     }
-
-    console.log(stompClient.state);
     stompClient.activate();
     
     return () => {
       socketSubscription?.unsubscribe();
+      stompClient.deactivate();
     }
   }, []);
 
@@ -195,7 +194,7 @@ const DevicesPage = ({ organizationId, staticData }: DevicePageProps)=>{
       <main className="container">
         {device?.name}
 
-        <label htmlFor="temperature"></label>
+        <label htmlFor="temperature">Temperature</label>
         <input id="temperature" name="temperature" type="text" value={someText} onChange={(e)=>setSomeText(e.target.value)} />
         <button onClick={handleSubmit} disabled={!isSocketConnected}>Submit</button>
       </main>
