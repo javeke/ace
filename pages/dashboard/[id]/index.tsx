@@ -11,8 +11,7 @@ import errorHandler, { serverErrorResponse } from "../../../utils/apiErrorHandle
 import styles from '../../../styles/OrganizationPage.module.css';
 import Loading from "../../../components/Loading";
 import { isEmptyObject } from "../../../utils";
-import Link from "next/link";
-import { ActivationState, CompatClient, Stomp, StompSubscription } from "@stomp/stompjs";
+import { CompatClient, Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import DeviceCard from "../../../components/DeviceCard";
 
