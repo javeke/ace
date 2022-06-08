@@ -104,11 +104,11 @@ export async function getStaticProps({ params } : StaticProps) {
     if(response.status === StatusCodes.NO_CONTENT){
       return {
         props: { 
-            organizationId : params.id,
-            staticData: { 
-              data: null,
-              code: StatusCodes.NO_CONTENT,
-              msg:"No Device Available"
+          organizationId : params.id,
+          staticData: { 
+            data: null,
+            code: StatusCodes.NO_CONTENT,
+            msg:"No Device Available"
           } 
         }
       }
@@ -158,65 +158,65 @@ const DevicesPage = ({ organizationId, staticData }: DevicePageProps)=>{
   const [device, setDevice] = useState<Device>();
   const [isSocketConnected, setIsSocketConnected] = useState<boolean>();
   const [someText, setSomeText] = useState<string>("");
-  const [stompClient] = useState<CompatClient>(
-    Stomp.over(()=> new SockJS(WS_API || ""))
-  );
+  const [socketClient, setSocketConnection] = useState<CompatClient>();
   const [socketSubscription, setSocketSubscription] = useState<StompSubscription>();
   
-  useEffect(()=>{
+  // useEffect(()=>{
 
-    if(staticData.data){
-      setDevice(staticData.data);
-    }
+  //   const stompClient = Stomp.over(()=> new SockJS(WS_API || ""));
 
-    stompClient.debug = ()=>{};
+  //   if(staticData.data){
+  //     setDevice(staticData.data);
+  //   }
 
-    stompClient.onDisconnect = () => {  
-      console.log(`Disconnected from channel for ${device?.id}`);
-      setIsSocketConnected(false);
-    }
+  //   stompClient.debug = ()=>{};
 
-    stompClient.onConnect = () => {
-      console.log(`Connected to receiving channel for ${device?.id}`);
+  //   stompClient.onDisconnect = () => {  
+  //     console.log(`Disconnected from channel for ${device?.id}`);
+  //     setIsSocketConnected(false);
+  //   }
 
-      const subscription = stompClient.subscribe(`/deviceData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
-        const response = JSON.parse(frame?.body); 
-        console.log(response);
-      });
+  //   stompClient.onConnect = () => {
+  //     console.log(`Connected to receiving channel for ${device?.id}`);
 
-      setSocketSubscription(subscription);
+  //     const subscription = stompClient.subscribe(`/deviceData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
+  //       const response = JSON.parse(frame?.body); 
+  //       console.log(response);
+  //     });
 
-      setIsSocketConnected(true);
-    }
-    stompClient.activate();
+  //     setSocketSubscription(subscription);
+  //     setSocketConnection(stompClient);
+  //     setIsSocketConnected(true);
+  //   }
+  //   stompClient.activate();
     
-    return () => {
-      socketSubscription?.unsubscribe();
-      stompClient.deactivate();
-    }
-  }, []);
+  //   return () => {
+  //     socketSubscription?.unsubscribe();
+  //     stompClient.deactivate();
+  //   }
+  // }, []);
 
 
-  const handleSubmit = () => {
+  // const handleSubmit = () => {
 
-    const body: DeviceData = {
-      paramName: "Temparature",
-      paramValue: someText || "21",
-      createdAt: moment.tz()
-    };
+  //   const body: DeviceData = {
+  //     paramName: "Temparature",
+  //     paramValue: someText || "21",
+  //     createdAt: moment.tz()
+  //   };
 
-    stompClient.publish({
-      destination: `/ace/data/organizations/${organizationId}/devices/${device?.id}`,
-      body: JSON.stringify({
-        data: body,
-        message:"New Update for this channel"
-      })
-    });
-  }
+  //   socketClient?.publish({
+  //     destination: `/ace/data/organizations/${organizationId}/devices/${device?.id}`,
+  //     body: JSON.stringify({
+  //       data: body,
+  //       message:"New Update for this channel"
+  //     })
+  //   });
+  // }
 
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>{device?.name}</title>
         <meta name="description" content={"About this device"} />
       </Head>
@@ -226,7 +226,8 @@ const DevicesPage = ({ organizationId, staticData }: DevicePageProps)=>{
         <label htmlFor="temperature">Temperature</label>
         <input id="temperature" name="temperature" type="text" value={someText} onChange={(e)=>setSomeText(e.target.value)} />
         <button onClick={handleSubmit} disabled={!isSocketConnected}>Submit</button>
-      </main>
+      </main> */}
+      <div>Device</div>
     </>
   );
 }
