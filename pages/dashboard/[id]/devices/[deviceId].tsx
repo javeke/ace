@@ -62,19 +62,40 @@ export async function getStaticProps({ params } : StaticProps) {
 
   if(params === null || params === undefined){
     return {
-      props: { device: null }
+      props: { 
+        organizationId : "",
+        staticData: {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg:"Server Error"
+        }
+       }
     }
   }
 
   if(params.id === null || params.id === undefined){
     return {
-      props: { device: null }
+      props: { 
+        organizationId : "",
+        staticData: {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg:"Server Error"
+        }
+       }
     }
   }
 
   if(params.deviceId === null || params.deviceId === undefined){
     return {
-      props: { device: null }
+      props: { 
+        organizationId : params.id,
+        staticData: {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg:"Server Error"
+        }
+       }
     }
   }
 
@@ -83,10 +104,11 @@ export async function getStaticProps({ params } : StaticProps) {
     if(response.status === StatusCodes.NO_CONTENT){
       return {
         props: { 
+            organizationId : params.id,
             staticData: { 
-            data: null,
-            code: StatusCodes.NO_CONTENT,
-            msg:"No Device Available"
+              data: null,
+              code: StatusCodes.NO_CONTENT,
+              msg:"No Device Available"
           } 
         }
       }
@@ -96,6 +118,7 @@ export async function getStaticProps({ params } : StaticProps) {
       const err = errorHandler(response);
       return {
         props :{
+          organizationId : params.id,
           staticData : err
         }
       };
@@ -116,6 +139,7 @@ export async function getStaticProps({ params } : StaticProps) {
   } catch (error) {
     return {
       props: {
+        organizationId : params.id,
         staticData: serverErrorResponse
       }
     }
