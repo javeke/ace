@@ -63,13 +63,25 @@ export async function getStaticProps({ params } : StaticProps) {
 
   if(params === null || params === undefined){
     return {
-      props: { organization: null }
+      props: { 
+        staticData : {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg: "Server Error"
+        }
+       }
     }
   }
 
   if(params.id === null || params.id === undefined){
     return {
-      props: { organization: null }
+      props: { 
+        staticData : {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg: "Server Error"
+        }
+       }
     }
   }
 
@@ -80,9 +92,9 @@ export async function getStaticProps({ params } : StaticProps) {
       return {
         props: { 
             staticData: { 
-            data: null,
-            code: StatusCodes.NO_CONTENT,
-            msg:"No Organizations Available"
+              data: null,
+              code: StatusCodes.NO_CONTENT,
+              msg:"No Organizations Available"
           } 
         }
       }
