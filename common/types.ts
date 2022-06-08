@@ -22,6 +22,16 @@ export interface SocketDataMessage {
   message: string;
 }
 
+export interface SocketControlMessage {
+  data: Device;
+  message: ControlMessage;
+}
+
+export enum ControlMessage {
+  StateChange = "StateChange"
+};
+
+
 export interface Organization {
   organizationId: string,
   name: string,

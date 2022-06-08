@@ -1,7 +1,7 @@
 import { CompatClient, StompSubscription } from "@stomp/stompjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Device, DeviceData, SocketDataMessage } from "../../common/types";
+import { ControlMessage, Device, DeviceData, SocketControlMessage, SocketDataMessage } from "../../common/types";
 import styles from "./DeviceCard.module.css";
 import { BsCircleFill } from "react-icons/bs";
 
@@ -15,10 +15,13 @@ interface DeviceCardProps {
 const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
 
   const [socketSubscription, setSocketSubscription] = useState<StompSubscription>();
+  const [socketControlSubscription, setSocketControlSubscription] = useState<StompSubscription>();
   const [currentValue, setCurrentValue] = useState<DeviceData | undefined>();
+  const [currentState, setCurrentState] = useState<boolean>();
 
   useEffect(()=>{
     setCurrentValue(device?.dataPoints?.at(-1));
+    setCurrentState(device?.enabled);
 
     if(stompClient?.connected){
       const subscription = stompClient.subscribe(`/deviceData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
@@ -26,12 +29,42 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
         setCurrentValue(response.data);
       });
 
+      const controlSub = stompClient.subscribe(`/controlData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
+        const response: SocketControlMessage = JSON.parse(frame?.body); 
+        switch (response.message) {
+          case ControlMessage.StateChange:
+            setCurrentState(response.data.enabled);
+            break;
+        
+          default:
+            break;
+        }
+      });
+
       setSocketSubscription(subscription);
+      setSocketControlSubscription(controlSub);
     }
     return () => {
       socketSubscription?.unsubscribe();
+      socketControlSubscription?.unsubscribe();
     }
   }, []);
+
+  const toggleDeviceState = () => {
+
+    const body: SocketControlMessage = {
+      data: {
+        ...device,
+        enabled: !device.enabled
+      },
+      message: ControlMessage.StateChange
+    }
+
+    stompClient.publish({
+      destination: `/ace/data/organizations/${organizationId}/devices/${device?.id}`,
+      body: JSON.stringify(body)
+    });
+  }
 
   return (
     <div className={styles.device_card}>
@@ -42,7 +75,7 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
           </Link>
         </h4>
         <span className={styles.device_card_header_health}>{device.healthStatus || "Offline"}</span>
-        <span className={`${ device.enabled ? styles.device_card_header_enabled : styles.device_card_header_disabled} ${styles.device_card_header_state}`}>
+        <span onClick={toggleDeviceState} className={`${ currentState ? styles.device_card_header_enabled : styles.device_card_header_disabled} ${styles.device_card_header_state}`}>
           <BsCircleFill />
         </span>
       </div>
