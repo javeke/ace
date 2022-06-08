@@ -131,7 +131,7 @@ interface DevicePageProps {
 
 const DevicesPage = ({ organizationId, staticData }: DevicePageProps)=>{
 
-  const [device, setDevice] = useState<Device | null>(staticData.data);
+  const [device, setDevice] = useState<Device>();
   const [isSocketConnected, setIsSocketConnected] = useState<boolean>();
   const [someText, setSomeText] = useState<string>("");
   const [stompClient] = useState<CompatClient>(
@@ -140,6 +140,11 @@ const DevicesPage = ({ organizationId, staticData }: DevicePageProps)=>{
   const [socketSubscription, setSocketSubscription] = useState<StompSubscription>();
   
   useEffect(()=>{
+
+    if(staticData.data){
+      setDevice(staticData.data);
+    }
+
     stompClient.debug = ()=>{};
 
     stompClient.onDisconnect = () => {  
