@@ -1,0 +1,92 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--backdrop-bg-color);
+  backdrop-filter: blur(1px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal_container {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 8px;
+  background-color: var(--primary-bg-color);
+  filter: drop-shadow(0 0 3px var(--secondary-bg-color));
+}
+
+.modal_header {
+  padding: 0.5rem 2rem;
+  border-radius: inherit;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background-color: var(--secondary-bg-color);
+  position: relative;
+
+}
+
+.modal_header .modal_close{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 1rem;
+  cursor: pointer;
+  color: var(--secondary-color);
+  font-size: 20px;
+}
+
+.modal_close:hover {
+  cursor: pointer;
+  color: var(--primary-color);
+}
+
+.modal_header h3 {
+  text-align: center;
+}
+
+.modal_content {
+  padding: 1rem 2rem;
+}
+
+.error {
+  background-color: var(--error-bg-color);
+  color: var(--error-color);
+}
+
+@keyframes opening {
+  from {
+    opacity: 0;
+  } 
+  to {
+    opacity: 1;
+  } 
+}
+
+@keyframes closing {
+  from {
+    opacity: 1;
+  } 
+  to {
+    opacity: 0;
+  } 
+}
+
+.opening_backdrop {
+  animation: opening 0.2s ease-out forwards;
+}
+
+.opening_modal {
+  animation: opening 0.5s ease-in-out forwards;
+}
+
+.closing_backdrop {
+  animation: closing 0.5s ease-out forwards;
+}
+
+.closing_modal {
+  animation: closing 0.2s ease-in-out forwards;
+}

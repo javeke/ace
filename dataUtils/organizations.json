@@ -1,0 +1,14 @@
+[
+  {
+    "id":"some-id",
+    "organizationId":"some-ranodm-id",
+    "name":"First Organization",
+    "description":"This organization specializes in medical grade devices for critical and non-critical care patients."
+  },
+  {
+    "id":"next-id",
+    "organizationId":"some-ranodm-id-again",
+    "name":"Second Organization",
+    "description":"We provide one stop solutions for all your agricultural and e-farm solutions."
+  }
+]

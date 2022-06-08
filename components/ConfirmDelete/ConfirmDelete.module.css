@@ -1,0 +1,36 @@
+.confirm_delete {
+  padding: 1rem 0;
+}
+
+.confirm_delete_header {
+  margin-bottom: 1rem;
+}
+
+.confirm_delete_actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.confirm_delete_actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.confirm_delete_actions button:hover {
+  filter: drop-shadow(0 0 3px var(--secondary-color));
+}
+
+.confirm_delete_actions_cancel {
+  border: 2px solid var(--secondary-color);
+  background-color: var(--primary-bg-color);
+  color: var(--secondary-color);
+}
+
+.confirm_delete_actions_cta {
+  color: var(--primary-inverse-color);
+  background-color: var(--primary-inverse-bg-color);
+  border: 2px solid var(--primary-inverse-bg-color);;
+}
