@@ -9,7 +9,7 @@ import { BsCircleFill } from "react-icons/bs";
 interface DeviceCardProps {
   organizationId: string;
   device: Device;
-  stompClient: CompatClient
+  stompClient: CompatClient | undefined
 }
 
 const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
@@ -42,6 +42,8 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
         }
       });
 
+      console.log(controlSub);
+
       setSocketSubscription(subscription);
       setSocketControlSubscription(controlSub);
     }
@@ -49,19 +51,19 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
       socketSubscription?.unsubscribe();
       socketControlSubscription?.unsubscribe();
     }
-  }, []);
+  }, [stompClient]);
 
   const toggleDeviceState = () => {
 
     const body: SocketControlMessage = {
       control: {
         ...device,
-        enabled: !device.enabled
+        enabled: !currentState
       },
       message: ControlMessage.StateChange
     }
 
-    stompClient.publish({
+    stompClient?.publish({
       destination: `/ace/control/organizations/${organizationId}/devices/${device?.id}`,
       body: JSON.stringify(body)
     });

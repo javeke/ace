@@ -129,12 +129,11 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
   const handleSubmitRef = useRef<HTMLFormElement>(null);
   const [organization, setOrganization] = useState<Organization | null>(staticData.data);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-
-  const [stompClient] = useState<CompatClient>(
-    Stomp.over(()=> new SockJS(WS_API || ""))
-  );
-  
+  const [socketClient, setSocketConnection] = useState<CompatClient>();
+    
   useEffect(()=>{
+    const stompClient = Stomp.over(()=> new SockJS(WS_API || ""));
+
     stompClient.debug = ()=>{};
 
     stompClient.onDisconnect = () => {  
@@ -143,6 +142,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
 
     stompClient.onConnect = () => {
       console.log(`Connected to receiving channel for ${organization?.organizationId}`);
+      setSocketConnection(stompClient);
     }
     
     stompClient.activate();
@@ -257,7 +257,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
                     organization?.devices?.length ? (
                       organization.devices.map((device)=>{
                         return (
-                          <DeviceCard key={device.id} organizationId={organization.organizationId} device={device} stompClient={stompClient} />
+                          <DeviceCard key={device.id} organizationId={organization.organizationId} device={device} stompClient={socketClient} />
                         )
                       })
                     )
