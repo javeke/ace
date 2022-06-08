@@ -50,101 +50,101 @@ export async function getStaticPaths(){
 }
 
 interface StaticProps {
-  params?: { 
+  params: { 
     id: string,
     deviceId: string;
   };
 }
 
 
-// export async function getStaticProps({ params } : StaticProps) {
-//   const apiEndpoint = process.env.API_ENDPOINT!;
+export async function getStaticProps({ params } : StaticProps) {
+  const apiEndpoint = process.env.API_ENDPOINT!;
 
-//   if(params === null || params === undefined){
-//     return {
-//       props: { 
-//         organizationId : "",
-//         staticData: {
-//           data: null,
-//           code: StatusCodes.INTERNAL_SERVER_ERROR,
-//           msg:"Server Error"
-//         }
-//        }
-//     }
-//   }
+  // if(params === null || params === undefined){
+  //   return {
+  //     props: { 
+  //       organizationId : "",
+  //       staticData: {
+  //         data: null,
+  //         code: StatusCodes.INTERNAL_SERVER_ERROR,
+  //         msg:"Server Error"
+  //       }
+  //      }
+  //   }
+  // }
 
-//   if(params.id === null || params.id === undefined){
-//     return {
-//       props: { 
-//         organizationId : "",
-//         staticData: {
-//           data: null,
-//           code: StatusCodes.INTERNAL_SERVER_ERROR,
-//           msg:"Server Error"
-//         }
-//        }
-//     }
-//   }
+  // if(params.id === null || params.id === undefined){
+  //   return {
+  //     props: { 
+  //       organizationId : "",
+  //       staticData: {
+  //         data: null,
+  //         code: StatusCodes.INTERNAL_SERVER_ERROR,
+  //         msg:"Server Error"
+  //       }
+  //      }
+  //   }
+  // }
 
-//   if(params.deviceId === null || params.deviceId === undefined){
-//     return {
-//       props: { 
-//         organizationId : params.id,
-//         staticData: {
-//           data: null,
-//           code: StatusCodes.INTERNAL_SERVER_ERROR,
-//           msg:"Server Error"
-//         }
-//        }
-//     }
-//   }
+  // if(params.deviceId === null || params.deviceId === undefined){
+  //   return {
+  //     props: { 
+  //       organizationId : params.id,
+  //       staticData: {
+  //         data: null,
+  //         code: StatusCodes.INTERNAL_SERVER_ERROR,
+  //         msg:"Server Error"
+  //       }
+  //      }
+  //   }
+  // }
 
-//   try {
-//     const response = await fetch(`${apiEndpoint}/organizations/${params.id}/devices/${params.deviceId}`);
-//     if(response.status === StatusCodes.NO_CONTENT){
-//       return {
-//         props: { 
-//           organizationId : params.id,
-//           staticData: { 
-//             data: null,
-//             code: StatusCodes.NO_CONTENT,
-//             msg:"No Device Available"
-//           } 
-//         }
-//       }
-//     }
+  try {
+    const response = await fetch(`${apiEndpoint}/organizations/${params?.id}/devices/${params?.deviceId}`);
+    if(response.status === StatusCodes.NO_CONTENT){
+      return {
+        props: { 
+          organizationId : params?.id,
+          staticData: { 
+            data: null,
+            code: StatusCodes.NO_CONTENT,
+            msg:"No Device Available"
+          } 
+        }
+      }
+    }
 
-//     if(!(response.status >= StatusCodes.OK && response.status<= HTTP_SUCCESS_UPPER_CODE)){
-//       const err = errorHandler(response);
-//       return {
-//         props :{
-//           organizationId : params.id,
-//           staticData : err
-//         }
-//       };
-//     }
+    if(!(response.status >= StatusCodes.OK && response.status<= HTTP_SUCCESS_UPPER_CODE)){
+      const err = errorHandler(response);
+      return {
+        props :{
+          organizationId : params?.id,
+          staticData : err
+        }
+      };
+    }
 
-//     const data: Device = await response.json();
-//     return {
-//       props : { 
-//         organizationId : params?.id,
-//         staticData : {
-//           data,
-//           code: StatusCodes.OK,
-//           msg:"Device Retrieved" 
-//         }
-//       }
-//     }
+    const data: Device = await response.json();
+    return {
+      props : { 
+        organizationId : params?.id,
+        staticData : {
+          data,
+          code: StatusCodes.OK,
+          msg:"Device Retrieved" 
+        }
+      }
+    }
 
-//   } catch (error) {
-//     return {
-//       props: {
-//         organizationId : params.id,
-//         staticData: serverErrorResponse
-//       }
-//     }
-//   }
-// }
+  } catch (error) {
+    return {
+      props: {
+        organizationId : params?.id,
+        staticData: serverErrorResponse
+      }
+    }
+  }
+}
 
 const WS_API = process.env.NEXT_PUBLIC_ACE_WS_API_ENDPOINT;
 
