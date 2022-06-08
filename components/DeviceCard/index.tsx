@@ -31,9 +31,10 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
 
       const controlSub = stompClient.subscribe(`/controlData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
         const response: SocketControlMessage = JSON.parse(frame?.body); 
+        console.log(response);
         switch (response.message) {
           case ControlMessage.StateChange:
-            setCurrentState(response.data.enabled);
+            setCurrentState(response.control.enabled);
             break;
         
           default:
@@ -53,7 +54,7 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
   const toggleDeviceState = () => {
 
     const body: SocketControlMessage = {
-      data: {
+      control: {
         ...device,
         enabled: !device.enabled
       },
@@ -61,7 +62,7 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
     }
 
     stompClient.publish({
-      destination: `/ace/data/organizations/${organizationId}/devices/${device?.id}`,
+      destination: `/ace/control/organizations/${organizationId}/devices/${device?.id}`,
       body: JSON.stringify(body)
     });
   }

@@ -23,7 +23,7 @@ export interface SocketDataMessage {
 }
 
 export interface SocketControlMessage {
-  data: Device;
+  control: Device;
   message: ControlMessage;
 }
 

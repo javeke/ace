@@ -253,7 +253,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
               <section className={styles.devices_section}>
                 <h3 className={styles.devices_section_header}>Devices</h3>
                 <div className={styles.devices_card_container}>
-                  {/* {
+                  {
                     organization?.devices?.length ? (
                       organization.devices.map((device)=>{
                         return (
@@ -264,7 +264,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
                     : (
                       <p>No devices yet</p>
                     )
-                  } */}
+                  }
                 </div>
               </section>
             </>
