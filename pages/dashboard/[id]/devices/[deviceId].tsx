@@ -68,44 +68,44 @@ interface StaticProps {
 export async function getStaticProps({ params } : StaticProps) {
   const apiEndpoint = process.env.API_ENDPOINT!;
 
-  // if(params === null || params === undefined){
-  //   return {
-  //     props: { 
-  //       organizationId : "",
-  //       staticData: {
-  //         data: null,
-  //         code: StatusCodes.INTERNAL_SERVER_ERROR,
-  //         msg:"Server Error"
-  //       }
-  //      }
-  //   }
-  // }
+  if(params === null || params === undefined){
+    return {
+      props: { 
+        organizationId : "",
+        staticData: {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg:"Server Error"
+        }
+       }
+    }
+  }
 
-  // if(params.id === null || params.id === undefined){
-  //   return {
-  //     props: { 
-  //       organizationId : "",
-  //       staticData: {
-  //         data: null,
-  //         code: StatusCodes.INTERNAL_SERVER_ERROR,
-  //         msg:"Server Error"
-  //       }
-  //      }
-  //   }
-  // }
+  if(params.id === null || params.id === undefined){
+    return {
+      props: { 
+        organizationId : "",
+        staticData: {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg:"Server Error"
+        }
+       }
+    }
+  }
 
-  // if(params.deviceId === null || params.deviceId === undefined){
-  //   return {
-  //     props: { 
-  //       organizationId : params.id,
-  //       staticData: {
-  //         data: null,
-  //         code: StatusCodes.INTERNAL_SERVER_ERROR,
-  //         msg:"Server Error"
-  //       }
-  //      }
-  //   }
-  // }
+  if(params.deviceId === null || params.deviceId === undefined){
+    return {
+      props: { 
+        organizationId : params.id,
+        staticData: {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg:"Server Error"
+        }
+       }
+    }
+  }
 
   try {
     const response = await fetch(`${apiEndpoint}/organizations/${params?.id}/devices/${params?.deviceId}`);
@@ -157,74 +157,70 @@ export async function getStaticProps({ params } : StaticProps) {
 const WS_API = process.env.NEXT_PUBLIC_ACE_WS_API_ENDPOINT;
 
 interface DevicePageProps {
-  organizationId?: string;
+  organizationId: string;
   staticData: ApplicationApiDeviceResponse
 }
 
-const DevicesPage = ()=>{
+const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
 
-  const [device, setDevice] = useState<Device>();
+  const [device, setDevice] = useState<Device | null>(staticData.data);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean>();
   const [someText, setSomeText] = useState<string>("");
   const [socketClient, setSocketConnection] = useState<CompatClient>();
   const [socketSubscription, setSocketSubscription] = useState<StompSubscription>();
   
-  // useEffect(()=>{
+  useEffect(()=>{
 
-  //   const stompClient = Stomp.over(()=> new SockJS(WS_API || ""));
+    const stompClient = Stomp.over(()=> new SockJS(WS_API || ""));
 
-  //   if(staticData.data){
-  //     setDevice(staticData.data);
-  //   }
+    stompClient.debug = ()=>{};
 
-  //   stompClient.debug = ()=>{};
+    stompClient.onDisconnect = () => {  
+      console.log(`Disconnected from channel for ${device?.id}`);
+      setIsSocketConnected(false);
+    }
 
-  //   stompClient.onDisconnect = () => {  
-  //     console.log(`Disconnected from channel for ${device?.id}`);
-  //     setIsSocketConnected(false);
-  //   }
+    stompClient.onConnect = () => {
+      console.log(`Connected to receiving channel for ${device?.id}`);
 
-  //   stompClient.onConnect = () => {
-  //     console.log(`Connected to receiving channel for ${device?.id}`);
+      const subscription = stompClient.subscribe(`/deviceData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
+        const response = JSON.parse(frame?.body); 
+        console.log(response);
+      });
 
-  //     const subscription = stompClient.subscribe(`/deviceData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
-  //       const response = JSON.parse(frame?.body); 
-  //       console.log(response);
-  //     });
-
-  //     setSocketSubscription(subscription);
-  //     setSocketConnection(stompClient);
-  //     setIsSocketConnected(true);
-  //   }
-  //   stompClient.activate();
+      setSocketSubscription(subscription);
+      setSocketConnection(stompClient);
+      setIsSocketConnected(true);
+    }
+    stompClient.activate();
     
-  //   return () => {
-  //     socketSubscription?.unsubscribe();
-  //     stompClient.deactivate();
-  //   }
-  // }, []);
+    return () => {
+      socketSubscription?.unsubscribe();
+      stompClient.deactivate();
+    }
+  }, []);
 
 
-  // const handleSubmit = () => {
+  const handleSubmit = () => {
 
-  //   const body: DeviceData = {
-  //     paramName: "Temparature",
-  //     paramValue: someText || "21",
-  //     createdAt: moment.tz()
-  //   };
+    const body: DeviceData = {
+      paramName: "Temparature",
+      paramValue: someText || "21",
+      createdAt: moment.tz()
+    };
 
-  //   socketClient?.publish({
-  //     destination: `/ace/data/organizations/${organizationId}/devices/${device?.id}`,
-  //     body: JSON.stringify({
-  //       data: body,
-  //       message:"New Update for this channel"
-  //     })
-  //   });
-  // }
+    socketClient?.publish({
+      destination: `/ace/data/organizations/${organizationId}/devices/${device?.id}`,
+      body: JSON.stringify({
+        data: body,
+        message:"New Update for this channel"
+      })
+    });
+  }
 
   return (
     <>
-      {/* <Head>
+      <Head>
         <title>{device?.name}</title>
         <meta name="description" content={"About this device"} />
       </Head>
@@ -234,8 +230,7 @@ const DevicesPage = ()=>{
         <label htmlFor="temperature">Temperature</label>
         <input id="temperature" name="temperature" type="text" value={someText} onChange={(e)=>setSomeText(e.target.value)} />
         <button onClick={handleSubmit} disabled={!isSocketConnected}>Submit</button>
-      </main> */}
-      <div>Device</div>
+      </main>
     </>
   );
 }
