@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Head from "next/head";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ApplicationApiOrganizationResponse, HTTP_SUCCESS_UPPER_CODE, Organization } from "../../../common/types";
 import BaseError from "../../../components/BaseError";
 import EditOrganization from "../../../components/EditOrganization";
@@ -11,6 +11,9 @@ import errorHandler, { serverErrorResponse } from "../../../utils/apiErrorHandle
 import styles from '../../../styles/OrganizationPage.module.css';
 import Loading from "../../../components/Loading";
 import { isEmptyObject } from "../../../utils";
+import { CompatClient, Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import DeviceCard from "../../../components/DeviceCard";
 
 export async function getStaticPaths() {
   const apiEndpoint = process.env.API_ENDPOINT!;
@@ -60,13 +63,25 @@ export async function getStaticProps({ params } : StaticProps) {
 
   if(params === null || params === undefined){
     return {
-      props: { organization: null }
+      props: { 
+        staticData : {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg: "Server Error"
+        }
+       }
     }
   }
 
   if(params.id === null || params.id === undefined){
     return {
-      props: { organization: null }
+      props: { 
+        staticData : {
+          data: null,
+          code: StatusCodes.INTERNAL_SERVER_ERROR,
+          msg: "Server Error"
+        }
+       }
     }
   }
 
@@ -77,9 +92,9 @@ export async function getStaticProps({ params } : StaticProps) {
       return {
         props: { 
             staticData: { 
-            data: null,
-            code: StatusCodes.NO_CONTENT,
-            msg:"No Organizations Available"
+              data: null,
+              code: StatusCodes.NO_CONTENT,
+              msg:"No Organizations Available"
           } 
         }
       }
@@ -95,7 +110,6 @@ export async function getStaticProps({ params } : StaticProps) {
     }
 
     const data: Organization = await response.json();
-
     return {
       props : { 
         staticData : {
@@ -115,6 +129,8 @@ export async function getStaticProps({ params } : StaticProps) {
   }
 }
 
+
+const WS_API = process.env.NEXT_PUBLIC_ACE_WS_API_ENDPOINT;
 interface OrganizationPageProps {
   staticData: ApplicationApiOrganizationResponse
 }
@@ -125,6 +141,29 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
   const handleSubmitRef = useRef<HTMLFormElement>(null);
   const [organization, setOrganization] = useState<Organization | null>(staticData.data);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [socketClient, setSocketConnection] = useState<CompatClient>();
+    
+  useEffect(()=>{
+    const stompClient = Stomp.over(()=> new SockJS(WS_API || ""));
+
+    stompClient.debug = ()=>{};
+
+    stompClient.onDisconnect = () => {  
+      console.log(`Disconnected from all channels for ${organization?.organizationId}`);
+    }
+
+    stompClient.onConnect = () => {
+      console.log(`Connected to receiving channel for ${organization?.organizationId}`);
+      setSocketConnection(stompClient);
+    }
+    
+    stompClient.activate();
+    
+    return () => {
+      stompClient?.deactivate();
+    }
+  }, []);
+
 
   if(staticData.data === null){
     return <BaseError />
@@ -134,9 +173,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
     const NO_CHANGES_MESSAGE = "No changes were made.";
 
     setIsLoading(true);
-    try {
-      console.log(updateOrganization);
-    
+    try {    
       if(isEmptyObject(updateOrganization)) {
         throw new Error(NO_CHANGES_MESSAGE);
       }
@@ -221,9 +258,28 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
             </div>
           ):
           (
-            <div>
-              {organization?.description}
-            </div>
+            <>
+              <div className={styles.organization_description}>
+                {organization?.description}
+              </div>
+              <section className={styles.devices_section}>
+                <h3 className={styles.devices_section_header}>Devices</h3>
+                <div className={styles.devices_card_container}>
+                  {
+                    organization?.devices?.length ? (
+                      organization.devices.map((device)=>{
+                        return (
+                          <DeviceCard key={device.id} organizationId={organization.organizationId} device={device} stompClient={socketClient} />
+                        )
+                      })
+                    )
+                    : (
+                      <p>No devices yet</p>
+                    )
+                  }
+                </div>
+              </section>
+            </>
           )
         }
         { isLoading && <Loading isFullscreen onClick={()=> setIsLoading(false)}/> }

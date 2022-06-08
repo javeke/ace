@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ApplicationApiOrganizationResponse, HTTP_SUCCESS_UPPER_CODE } from "../../../../common/types";
-import errorHandler, { serverErrorResponse } from "../../../../utils/apiErrorHandler";
+import { ApplicationApiOrganizationResponse, HTTP_SUCCESS_UPPER_CODE } from "../../../../../common/types";
+import errorHandler, { serverErrorResponse } from "../../../../../utils/apiErrorHandler";
 
 // TODO: Complete this api call to the javeke ws to remove organization from DB
 

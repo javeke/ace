@@ -3,14 +3,14 @@
   gap: 24px;
 }
 
-@media screen and (min-width: 640px) {
+@media screen and (min-width: 680px) {
   .card_container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 
-@media screen and (min-width: 1040px) {
+@media screen and (min-width: 1080px) {
   .card_container {
     grid-template-columns: repeat(3, 1fr);
   }

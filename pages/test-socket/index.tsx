@@ -4,7 +4,7 @@ import SockJS from 'sockjs-client';
 
 export default function TestSocket(){
   useEffect(()=>{
-    const stompClient = Stomp.over(()=> new SockJS("http://localhost:9092/ace-sock"));
+    const stompClient = Stomp.over(()=> new SockJS("http://localhost:9911/ace-sock"));
 
     stompClient.debug = ()=>{};
 

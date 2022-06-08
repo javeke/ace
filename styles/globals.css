@@ -29,20 +29,22 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-.dark-theme {
-  --primary-color: #fff;
-  --secondary-color: #e2e2e2;
-  --primary-inverse-color: #000;
-  --secondary-inverse-color: #212112;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #fff;
+    --secondary-color: #e2e2e2;
+    --primary-inverse-color: #000;
+    --secondary-inverse-color: #212112;
+    
+    --primary-bg-color: #303033;
+    --primary-bg-color-900: #252527;
+    --secondary-bg-color: #4f4f51;
   
-  --primary-bg-color: #303033;
-  --primary-bg-color-900: #252527;
-  --secondary-bg-color: #4f4f51;
-
-  --primary-inverse-bg-color: #efefef;
-  --secondary-inverse-bg-color: #d6d6d8;
-
-  --box-shadow-color: #303030;
+    --primary-inverse-bg-color: #efefef;
+    --secondary-inverse-bg-color: #d6d6d8;
+  
+    --box-shadow-color: #303030;
+  }
 }
 
 body {
