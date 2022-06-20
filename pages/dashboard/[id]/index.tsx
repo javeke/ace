@@ -119,7 +119,8 @@ export async function getStaticProps({ params } : StaticProps) {
           code: StatusCodes.OK,
           msg:"Organization Retrieved" 
         }
-      }
+      },
+      revalidate: 2
     }
 
   } catch (error) {
