@@ -1,0 +1,44 @@
+.adding_device_form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.adding_device_form_field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+
+.adding_device_form_field label {
+  font-size: 0.9rem;
+}
+
+
+.adding_device_form_field :is(input, select) {
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.adding_device_form_field input {
+  font-weight: bold;
+}
+
+.adding_device_form_field input::placeholder {
+  font-style: italic;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.adding_device_submit {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.adding_device_submit button {
+  padding: 0.3rem 2rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
