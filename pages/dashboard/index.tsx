@@ -51,8 +51,7 @@ export const getServerSideProps = async () => {
           code: StatusCodes.OK,
           msg:"Organizations Retrieved" 
         }
-      },
-      revalidate: 2
+      }
     }
   }
   catch(error){
