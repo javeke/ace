@@ -5,7 +5,13 @@ import { ApplicationApiDeviceResponse } from "../../../../../../common/types";
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ApplicationApiDeviceResponse>){
 
   const apiEndpoint = process.env.API_ENDPOINT!;
-  console.log(req.query);
+  const id = req.query.id;
+  const deviceId = req.query.deviceId;
+  const body = req.body;
 
-  
+  if(req.method === "GET") {
+    const respose = await fetch(`${apiEndpoint}/organizations/${id}/devices`, {
+      body
+    });
+  }
 }

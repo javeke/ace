@@ -35,6 +35,8 @@
 
 .devices_section .devices_section_header {
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 .devices_card_container {
@@ -52,4 +54,11 @@
   .devices_card_container {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+.devices_section_add_device_btn span{
+  padding: 0.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

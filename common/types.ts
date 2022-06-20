@@ -57,6 +57,10 @@ export interface DeviceDataResponse extends ApplicationResponse {
   data: Device;
 }
 
+export interface DevicesDataResponse extends ApplicationResponse {
+  data: Device[];
+}
+
 export interface ErrorDataResponse extends ApplicationResponse {
   data: null;
 }
@@ -66,3 +70,5 @@ export type ApplicationApiOrganizationsResponse = OrganizationsDataResponse | Er
 export type ApplicationApiOrganizationResponse = OrganizationDataResponse | ErrorDataResponse;
 
 export type ApplicationApiDeviceResponse = DeviceDataResponse | ErrorDataResponse;
+
+export type ApplicationApiDevicesResponse = DevicesDataResponse | ErrorDataResponse;

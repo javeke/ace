@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
-import { ApplicationApiOrganizationResponse, HTTP_SUCCESS_UPPER_CODE, Organization } from "../../../common/types";
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { ApplicationApiDevicesResponse, ApplicationApiOrganizationResponse, HTTP_SUCCESS_UPPER_CODE, Organization } from "../../../common/types";
 import BaseError from "../../../components/BaseError";
 import EditOrganization from "../../../components/EditOrganization";
 import PrimaryButton from "../../../components/PrimaryButton";
@@ -14,6 +14,8 @@ import { isEmptyObject } from "../../../utils";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import DeviceCard from "../../../components/DeviceCard";
+import Modal from "../../../components/Modal";
+import AddingDevice from "../../../components/AddingDevice";
 
 export async function getStaticPaths() {
   const apiEndpoint = process.env.API_ENDPOINT!;
@@ -141,7 +143,11 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
   const handleSubmitRef = useRef<HTMLFormElement>(null);
   const [organization, setOrganization] = useState<Organization | null>(staticData.data);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isAddingDevice, setIsAddingDevice] = useState<boolean>();
   const [socketClient, setSocketConnection] = useState<CompatClient>();
+  const [modalTitle, setModalTitle] = useState<string>("Modal");
+  const [modalComponent, setModalComponent] = useState<ReactNode>();
+
     
   useEffect(()=>{
     const stompClient = Stomp.over(()=> new SockJS(WS_API || ""));
@@ -223,6 +229,60 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
     handleSubmitRef.current?.requestSubmit();
   }
 
+  const handleAddDeviceRequest = async (deviceName: string, deviceType: string) => {
+    const NOT_ADDED_MESSAGE = "No device added.";
+
+    setIsLoading(true);
+    try {  
+      const response  = await fetch(`/api/v1/organization/${organization?.organizationId}/devices`, {
+        method: "POST",
+        body: JSON.stringify({
+          name: deviceName,
+          type: deviceType
+        })
+      });
+
+      if(response.status === StatusCodes.NOT_MODIFIED){
+        alert(`Could not create device.`);
+      }
+
+      if(response.status === StatusCodes.INTERNAL_SERVER_ERROR){
+        alert("A server error occurred");
+      }
+
+      if(response.status ===  StatusCodes.OK){
+        alert(`Device ${deviceName} created.`);
+        const data: ApplicationApiDevicesResponse = await response.json();
+
+        const updateOrganization = {
+          ...organization!,
+          devices: data.data
+        };
+
+        setOrganization(updateOrganization);
+      }
+    }
+    catch(error: any){
+      if(error.message === NOT_ADDED_MESSAGE){
+        alert(error.message);
+      }
+      else{
+        alert("No request was sent.");
+      }
+    }
+    finally{
+      setIsAddingDevice(false);
+      setIsLoading(false);
+
+    }
+  }
+
+  const handleAddDevice = () => {
+    setModalTitle("Add Device");
+    setModalComponent(<AddingDevice onSubmit={handleAddDeviceRequest} />);
+    setIsAddingDevice(true);
+  }
+
   return (
     <>
       <Head>
@@ -256,14 +316,18 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
                 <img src="/review.svg" alt="Review" />
               </div>
             </div>
-          ):
-          (
+          ) : (
             <>
               <div className={styles.organization_description}>
                 {organization?.description}
               </div>
               <section className={styles.devices_section}>
-                <h3 className={styles.devices_section_header}>Devices</h3>
+                <div className={styles.devices_section_header}>
+                  <h3>Devices</h3>
+                  <PrimaryButton className={styles.devices_section_add_device_btn} onClick={handleAddDevice}> 
+                    <span>Add device</span>
+                  </PrimaryButton>
+                </div>
                 <div className={styles.devices_card_container}>
                   {
                     organization?.devices?.length ? (
@@ -282,6 +346,7 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
             </>
           )
         }
+        { isAddingDevice && <Modal isError={false} title={modalTitle} onClose={()=> setIsAddingDevice(false)}>{modalComponent}</Modal> }
         { isLoading && <Loading isFullscreen onClick={()=> setIsLoading(false)}/> }
       </div>
     </>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ControlMessage, Device, DeviceData, SocketControlMessage, SocketDataMessage } from "../../common/types";
 import styles from "./DeviceCard.module.css";
 import { BsCircleFill } from "react-icons/bs";
+import { MdSensors } from "react-icons/md";
 
 
 interface DeviceCardProps {
@@ -18,7 +19,8 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
   const [socketControlSubscription, setSocketControlSubscription] = useState<StompSubscription>();
   const [currentValue, setCurrentValue] = useState<DeviceData | undefined>();
   const [currentState, setCurrentState] = useState<boolean>();
-
+  const [isReceivingMessage, setIsReceivingMessage] = useState<boolean>();
+  
   useEffect(()=>{
     setCurrentValue(device?.dataPoints?.at(-1));
     setCurrentState(device?.enabled);
@@ -32,6 +34,7 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
       const controlSub = stompClient.subscribe(`/controlData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
         const response: SocketControlMessage = JSON.parse(frame?.body); 
         console.log(response);
+        setIsReceivingMessage(true);
         switch (response.message) {
           case ControlMessage.StateChange:
             setCurrentState(response.control.enabled);
@@ -40,9 +43,9 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
           default:
             break;
         }
-      });
 
-      console.log(controlSub);
+        setTimeout(() => setIsReceivingMessage(false), 1000);
+      });
 
       setSocketSubscription(subscription);
       setSocketControlSubscription(controlSub);
@@ -69,6 +72,18 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
     });
   }
 
+  const displayDeviceStatus = (): string => {
+    if(!currentState) {
+      return "Offline";
+    }
+
+    if(isReceivingMessage){
+      return "Active";
+    }
+
+    return "Idle";
+  }
+
   return (
     <div className={styles.device_card}>
       <div className={styles.device_card_header}>
@@ -76,15 +91,27 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
           <Link href={`/dashboard/${organizationId}/devices/${device.id}`}>
             <a>{device.name}</a>
           </Link>
+          <MdSensors />
         </h4>
-        <span className={styles.device_card_header_health}>{device.healthStatus || "Offline"}</span>
+        <span className={styles.device_card_header_health}>{displayDeviceStatus()}</span>
         <span onClick={toggleDeviceState} className={`${ currentState ? styles.device_card_header_enabled : styles.device_card_header_disabled} ${styles.device_card_header_state}`}>
           <BsCircleFill />
         </span>
       </div>
-      <div>
-        <h5>Latest Value: </h5>
-        <p><span>{currentValue?.paramName}:</span><strong>{currentValue?.paramValue}</strong></p>
+      <div className={styles.devices_card_values}>
+        <h5 className={styles.devices_card_values_title}>Latest Value </h5>
+        <p>
+         {
+          currentValue ? (
+            <>
+              <span>{currentValue?.paramName}:</span>
+              <strong>{currentValue?.paramValue}</strong>
+            </>
+          ) : (
+            <em>No data available</em>
+          )
+         }
+        </p>
       </div>
     </div>
   );
