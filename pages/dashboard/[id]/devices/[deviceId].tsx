@@ -8,59 +8,6 @@ import { useEffect } from 'react';
 import SockJS from 'sockjs-client';
 import moment from "moment-timezone";
 
-export async function getStaticPaths(){
-  const apiEndpoint = process.env.API_ENDPOINT!;
-
-  try {
-    const response = await fetch(`${apiEndpoint}/organizations`);
-
-    if(response.status === StatusCodes.NO_CONTENT){
-      return {
-        paths: [],
-        fallback:  false
-      }
-    }
-
-    if(!(response.status >= StatusCodes.OK && response.status<= HTTP_SUCCESS_UPPER_CODE)){
-      throw new Error;
-    }
-      
-    const data: Organization[] = await response.json();
-
-    const paths :{
-      params: {
-        id : string,
-        deviceId: string
-      }
-    }[]  = [];
-
-    for (let organization of data){
-      if(!organization.devices){
-        break;
-      }
-      for (let device of organization.devices) {
-        paths.push({
-         params: {
-            id: organization.organizationId,
-            deviceId: device.id
-          }
-        });
-      }
-    }
-
-    return {
-      paths,
-      fallback: "blocking"
-    }
-
-  } catch (error) {
-    return {
-      paths: [],
-      fallback:  false
-    }
-  }
-}
-
 interface StaticProps {
   params: { 
     id: string,
@@ -69,7 +16,7 @@ interface StaticProps {
 }
 
 
-export async function getStaticProps({ params } : StaticProps) {
+export async function getServerSideProps({ params } : StaticProps) {
   const apiEndpoint = process.env.API_ENDPOINT!;
 
   if(params === null || params === undefined){
@@ -145,8 +92,7 @@ export async function getStaticProps({ params } : StaticProps) {
           code: StatusCodes.OK,
           msg:"Device Retrieved" 
         }
-      },
-      revalidate: 2
+      }
     }
 
   } catch (error) {
