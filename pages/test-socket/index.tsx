@@ -38,7 +38,6 @@ export default function TestSocket(){
 
   },[]);
 
-
   return (
     <div>
       Some gibberish

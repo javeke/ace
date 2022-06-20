@@ -14,6 +14,12 @@
   gap: 1rem;
 }
 
+.device_card_header h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .device_card_header_health{
   margin-left: auto;
 }
@@ -31,4 +37,21 @@
 
 .device_card_header_disabled {
   color: var(--primary-color);
+}
+
+.devices_card_values { 
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.devices_card_values_title { 
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.devices_card_values p {
+  display: flex;
+  gap: 0.5rem;
 }
