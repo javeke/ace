@@ -17,50 +17,11 @@ import DeviceCard from "../../../components/DeviceCard";
 import Modal from "../../../components/Modal";
 import AddingDevice from "../../../components/AddingDevice";
 
-export async function getStaticPaths() {
-  const apiEndpoint = process.env.API_ENDPOINT!;
-
-  try {
-    const response = await fetch(`${apiEndpoint}/organizations`);
-
-    if(response.status === StatusCodes.NO_CONTENT){
-      return {
-        paths: [],
-        fallback:  false
-      }
-    }
-
-    if(!(response.status >= StatusCodes.OK && response.status<= HTTP_SUCCESS_UPPER_CODE)){
-      throw new Error;
-    }
-      
-    const data: Organization[] = await response.json();
-
-    const paths  = data.map(organization =>({
-      params: {
-        id: organization.organizationId
-      }
-    }));
-
-    return {
-      paths,
-      fallback: "blocking"
-    }
-
-  } catch (error) {
-    return {
-      paths: [],
-      fallback:  false
-    }
-  }
-
-}
-
 interface StaticProps {
-  params?: { id: string };
+  params: { id: string };
 }
 
-export async function getStaticProps({ params } : StaticProps) {
+export async function getServerSideProps({ params } : StaticProps) {
   const apiEndpoint = process.env.API_ENDPOINT!;
 
   if(params === null || params === undefined){
