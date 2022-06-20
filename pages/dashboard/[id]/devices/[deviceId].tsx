@@ -28,8 +28,10 @@ export async function getStaticPaths(){
     const data: Organization[] = await response.json();
 
     const paths :{
-      id : string,
-      deviceId: string
+      params: {
+        id : string,
+        deviceId: string
+      }
     }[]  = [];
 
     for (let organization of data){
@@ -38,8 +40,10 @@ export async function getStaticPaths(){
       }
       for (let device of organization.devices) {
         paths.push({
-          id: organization.organizationId,
-          deviceId: device.id
+         params: {
+            id: organization.organizationId,
+            deviceId: device.id
+          }
         });
       }
     }
