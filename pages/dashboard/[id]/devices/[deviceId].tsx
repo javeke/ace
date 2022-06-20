@@ -141,7 +141,8 @@ export async function getStaticProps({ params } : StaticProps) {
           code: StatusCodes.OK,
           msg:"Device Retrieved" 
         }
-      }
+      },
+      revalidate: 2
     }
 
   } catch (error) {
