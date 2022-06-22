@@ -6,7 +6,11 @@ import errorHandler, { serverErrorResponse } from "../../../../utils/apiErrorHan
 import { CompatClient, Stomp, StompSubscription } from '@stomp/stompjs';
 import { useEffect } from 'react';
 import SockJS from 'sockjs-client';
-import moment from "moment-timezone";
+import moment, { Moment } from "moment-timezone";
+import Topbar from "../../../../components/Topbar";
+import PrimaryButton from "../../../../components/PrimaryButton";
+import SecondaryButton from "../../../../components/SecondaryButton";
+import styles from '../../../../styles/Devices.module.css';
 
 interface StaticProps {
   params: { 
@@ -119,6 +123,7 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
   const [someText, setSomeText] = useState<string>("");
   const [socketClient, setSocketConnection] = useState<CompatClient>();
   const [socketSubscription, setSocketSubscription] = useState<StompSubscription>();
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   
   useEffect(()=>{
 
@@ -151,6 +156,20 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
     }
   }, []);
 
+  const handleCancel = () => {
+    setIsEditing(false);
+  }
+
+  const handleSave = () => {
+    setIsEditing(false);
+  }
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  }
+
+  const formatDate = (date: Moment) => moment(date).format("MMM d, YYYY @ hh:mm:ss")
+
 
   const handleSubmit = () => {
 
@@ -176,11 +195,45 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
         <meta name="description" content={"About this device"} />
       </Head>
       <main className="container">
-        {device?.name}
+      <Topbar title={device?.name || ""} >
+          {
+            isEditing ? (
+              <>
+                <SecondaryButton className="spaced_button" onClick={handleCancel}>
+                  <span>Cancel</span>
+                </SecondaryButton>
+                <PrimaryButton className="spaced_button" onClick={handleSave}>
+                  <span>Save</span>
+                </PrimaryButton>
+              </>
+            ): (
+              <PrimaryButton className="spaced_button" onClick={handleEdit}>
+                <span>Edit</span>
+              </PrimaryButton>
+            )
+          }
+        </Topbar>
 
-        <label htmlFor="temperature">Temperature</label>
-        <input id="temperature" name="temperature" type="text" value={someText} onChange={(e)=>setSomeText(e.target.value)} />
-        <button onClick={handleSubmit} disabled={!isSocketConnected}>Submit</button>
+        <div className={styles.device_send_data}>
+          <div className={styles.device_send_data_field}>
+            <input id="temperature" name="temperature" type="number" placeholder="Temperature"
+              value={someText} onChange={(e)=>setSomeText(e.target.value)} />
+          </div>
+          <button className={styles.device_send_data_btn} onClick={handleSubmit} disabled={!isSocketConnected}>Submit</button>
+        </div>
+
+        <div className={styles.device_data_points}>
+          {
+            device?.dataPoints?.map((dataPoint, index)=>(
+              <div className={styles.device_data_point} key={`${dataPoint.createdAt}-${index}`}>
+                <div className={styles.device_data_point_params}>
+                  <span>{dataPoint.paramName}:</span><strong>{dataPoint.paramValue}</strong>
+                </div>
+                <small className={styles.device_data_point_time}>{formatDate(dataPoint.createdAt)}</small>
+              </div>
+            ))
+          }
+        </div>
       </main>
     </>
   );

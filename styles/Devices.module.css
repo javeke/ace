@@ -1,0 +1,71 @@
+.device_data_points {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+  margin: 2rem 0;
+}
+
+@media screen and (min-width: 480px) {
+  .device_data_points {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .device_data_points {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (min-width: 1080px) {
+  .device_data_points {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+
+.device_send_data {
+  display: grid;
+  gap: 12px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.device_send_data_field {
+  display: flex;
+  flex-direction: column;
+}
+
+.device_send_data_field input {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.device_send_data_btn {
+  height: 100%;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+}
+
+@media screen and (min-width: 380px) {
+  .device_send_data {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.device_data_point {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--secondary-bg-color);
+  padding: 2rem;
+  border-radius: 6px;
+}
+
+.device_data_point_params {
+  display: flex;
+  gap: 12px;
+}
