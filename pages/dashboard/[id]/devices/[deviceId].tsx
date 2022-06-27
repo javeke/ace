@@ -120,7 +120,7 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
 
   const [device, setDevice] = useState<Device | null>(staticData.data);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean>();
-  const [someText, setSomeText] = useState<string>("");
+  const [paramValue, setParamValue] = useState<string>("");
   const [socketClient, setSocketConnection] = useState<CompatClient>();
   const [socketSubscription, setSocketSubscription] = useState<StompSubscription>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -175,7 +175,7 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
 
     const body: DeviceData = {
       paramName: "Temparature",
-      paramValue: someText || "21",
+      paramValue: paramValue || "21",
       createdAt: moment.tz()
     };
 
@@ -217,7 +217,7 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
         <div className={styles.device_send_data}>
           <div className={styles.device_send_data_field}>
             <input id="temperature" name="temperature" type="number" placeholder="Temperature"
-              value={someText} onChange={(e)=>setSomeText(e.target.value)} />
+              value={paramValue} onChange={(e)=>setParamValue(e.target.value)} />
           </div>
           <button className={styles.device_send_data_btn} onClick={handleSubmit} disabled={!isSocketConnected}>Submit</button>
         </div>
