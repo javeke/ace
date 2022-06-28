@@ -69,3 +69,9 @@
   display: flex;
   gap: 12px;
 }
+
+.device_data_chart {
+  display: flex;
+  width: 100%;
+  max-width: 500px;
+}

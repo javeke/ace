@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Head from "next/head";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ApplicationApiDeviceResponse, Device, DeviceData, HTTP_SUCCESS_UPPER_CODE, Organization } from "../../../../common/types";
 import errorHandler, { serverErrorResponse } from "../../../../utils/apiErrorHandler";
 import { CompatClient, Stomp, StompSubscription } from '@stomp/stompjs';
@@ -11,7 +11,17 @@ import Topbar from "../../../../components/Topbar";
 import PrimaryButton from "../../../../components/PrimaryButton";
 import SecondaryButton from "../../../../components/SecondaryButton";
 import styles from '../../../../styles/Devices.module.css';
-
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
 interface StaticProps {
   params: { 
     id: string,
@@ -111,6 +121,16 @@ export async function getServerSideProps({ params } : StaticProps) {
 
 const WS_API = process.env.NEXT_PUBLIC_ACE_WS_API_ENDPOINT;
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 interface DevicePageProps {
   organizationId: string;
   staticData: ApplicationApiDeviceResponse
@@ -124,6 +144,32 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
   const [socketClient, setSocketConnection] = useState<CompatClient>();
   const [socketSubscription, setSocketSubscription] = useState<StompSubscription>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const options = useMemo(()=> ({
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: "Temperature",
+        color: "white"
+      },
+    }
+  }), []);
+
+  const chartData = useMemo(()=>({
+    labels: device?.dataPoints?.map((point)=> moment(point.createdAt).format("hh:mm:ss")), 
+    datasets: [
+      {
+        label: "Temperature",
+        data: device?.dataPoints?.map((point)=> Number(point.paramValue)),
+        backgroundColor: "red",
+        borderColor: "hsl(0, 80%, 40%)",
+      }
+    ]
+  }), [device?.name, device?.dataPoints]);
   
   useEffect(()=>{
 
@@ -141,7 +187,13 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
 
       const subscription = stompClient.subscribe(`/deviceData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
         const response = JSON.parse(frame?.body); 
-        console.log(response);
+        setDevice((device) => ({
+          ...device!,
+          dataPoints:[
+            ...device?.dataPoints!,
+            response.data
+          ]
+        }))
       });
 
       setSocketSubscription(subscription);
@@ -222,7 +274,7 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
           <button className={styles.device_send_data_btn} onClick={handleSubmit} disabled={!isSocketConnected}>Submit</button>
         </div>
 
-        <div className={styles.device_data_points}>
+        {/* <div className={styles.device_data_points}>
           {
             device?.dataPoints?.map((dataPoint, index)=>(
               <div className={styles.device_data_point} key={`${dataPoint.createdAt}-${index}`}>
@@ -233,6 +285,9 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
               </div>
             ))
           }
+        </div> */}
+        <div className={styles.device_data_chart}>
+          <Line options={options} data={chartData} />
         </div>
       </main>
     </>
