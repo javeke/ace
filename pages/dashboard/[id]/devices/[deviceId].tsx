@@ -147,9 +147,13 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
 
   const options = useMemo(()=> ({
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: {
+          color:"hsl(0, 0%, 80%)",
+        }
       },
       title: {
         display: true,
