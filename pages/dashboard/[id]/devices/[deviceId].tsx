@@ -147,24 +147,51 @@ const DevicesPage = ( { organizationId, staticData }:DevicePageProps )=>{
 
   const options = useMemo(()=> ({
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: {
+          color:"hsl(0, 0%, 80%)",
+        }
       },
       title: {
         display: true,
         text: "Temperature",
         color: "white"
       },
+    },
+    scales: {
+      x: {
+        title: {
+          type:"time",
+          display: true,
+          text: "Time",
+          color:"white"
+        },
+        ticks: {
+          color:"white"
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Temperature (deg C)",
+          color:"white"
+        },
+        ticks: {
+          color:"white"
+        },
+      }
     }
   }), []);
 
   const chartData = useMemo(()=>({
-    labels: device?.dataPoints?.map((point)=> moment(point.createdAt).format("hh:mm:ss")), 
+    labels: device?.dataPoints?.slice(device.dataPoints.length - 9).map((point)=> moment(point.createdAt).format("hh:mm:ss")), 
     datasets: [
       {
         label: "Temperature",
-        data: device?.dataPoints?.map((point)=> Number(point.paramValue)),
+        data: device?.dataPoints?.slice(device.dataPoints.length - 9).map((point)=> Number(point.paramValue)),
         backgroundColor: "red",
         borderColor: "hsl(0, 80%, 40%)",
       }
