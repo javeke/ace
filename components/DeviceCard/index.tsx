@@ -61,6 +61,7 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
     const body: SocketControlMessage = {
       control: {
         ...device,
+        dataPoints: null,
         enabled: !currentState
       },
       message: ControlMessage.StateChange
