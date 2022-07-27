@@ -33,7 +33,7 @@ const DeviceCard = ({device, organizationId, stompClient}: DeviceCardProps) => {
 
       const controlSub = stompClient.subscribe(`/controlData/organizations/${organizationId}/devices/${device?.id}`, (frame)=>{
         const response: SocketControlMessage = JSON.parse(frame?.body); 
-        console.log(response);
+
         setIsReceivingMessage(true);
         switch (response.message) {
           case ControlMessage.StateChange:
