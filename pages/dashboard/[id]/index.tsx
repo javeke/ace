@@ -109,9 +109,9 @@ const OrganizationPage = ( { staticData }: OrganizationPageProps ) => {
   const [modalTitle, setModalTitle] = useState<string>("Modal");
   const [modalComponent, setModalComponent] = useState<ReactNode>();
 
-    
-  useEffect(()=>{
-    const stompClient = Stomp.over(()=> new SockJS(WS_API || ""));
+  const stompClient = Stomp.over(()=> new SockJS(WS_API || ""));
+  
+  useEffect(()=>{  
 
     stompClient.debug = ()=>{};
 
